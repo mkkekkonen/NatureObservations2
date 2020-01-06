@@ -1,0 +1,8 @@
+{
+  "appId": "com.mkkekkonen.natureobservations",
+  "appName": "NatureObservations",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "cordova": {}
+}

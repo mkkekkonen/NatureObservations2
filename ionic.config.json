@@ -1,5 +1,7 @@
 {
   "name": "NatureObservationsIo5",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }

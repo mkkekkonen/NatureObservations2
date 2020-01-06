@@ -4,13 +4,18 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+import { TranslateModule } from '@ngx-translate/core';
+
 import { HomePage } from './home.page';
+
+import { NobsHeaderComponent } from '../nobs-header/nobs-header.component';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    TranslateModule.forChild(),
     RouterModule.forChild([
       {
         path: '',
@@ -18,6 +23,6 @@ import { HomePage } from './home.page';
       }
     ])
   ],
-  declarations: [HomePage]
+  declarations: [HomePage, NobsHeaderComponent]
 })
 export class HomePageModule {}

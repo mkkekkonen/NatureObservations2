@@ -1,3 +1,24 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu #menu side="start" menuId="menu" contentId="content">
+    <ion-header>
+      <ion-toolbar>
+      <ion-title>{{ 'APP.TITLE' | translate }}</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list>
+        <ion-item>
+          <select (change)="setLanguage($event.target.value)">
+            <option value="fi">Suomi</option>
+            <option value="en">English</option>
+          </select>
+        </ion-item>
+
+        <!-- TODO: routing -->
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <ion-router-outlet id="content"></ion-router-outlet>
 </ion-app>
