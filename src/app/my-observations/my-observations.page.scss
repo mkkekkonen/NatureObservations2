@@ -1,0 +1,21 @@
+ion-item {
+  ion-button {
+    width: 100% !important;
+  }
+}
+
+.search-sort {
+  margin-bottom: 1rem;
+
+  .flex-button {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .search-sort-criteria {
+    border: 1px solid #bbb;
+    border-top: none;
+    padding: 1rem;
+  }
+}

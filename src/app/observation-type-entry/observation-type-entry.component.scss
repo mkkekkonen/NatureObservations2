@@ -1,0 +1,15 @@
+app-observation-type-entry {
+
+  .obs-type {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 50px;
+    }
+
+    .label {
+        padding-left: 1rem;
+    }
+  }
+}

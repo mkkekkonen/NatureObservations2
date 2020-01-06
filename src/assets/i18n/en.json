@@ -1,5 +1,88 @@
 {
   "APP": {
+    "HOME": "Home",
+    "NEWOBS": "New observation",
+    "CREDITS": "Credits",
+    "DEBUG": "Debug",
     "TITLE": "Ionic App"
+  },
+  "HOME": {
+    "NOBS": "Nature Observations",
+    "NEWOBS": "New observation",
+    "MYOBS": "My observations",
+    "IDGUIDE": "Identification guide",
+    "DB": "Database",
+    "DEBUG": "Debug",
+    "CREDITS": "Credits"
+  },
+  "PAC": {
+    "PLANT": "Plant species"
+  },
+  "NEWOBS": {
+    "NEWOBS": "New observation",
+    "EDITOBS": "Edit an observation",
+    "TAKEPIC": "Take a picture",
+    "FILE": "File",
+    "LATINNAME": "Latin name",
+    "LOCATION": "Location",
+    "PICKLOC": "Choose a location",
+    "DESCR": "Description",
+    "SAVE": "Save",
+    "PICKPLT": "No plant species has been chosen!",
+    "SELECTTYPE": "Select type",
+    "TYPE": "Type",
+    "TITLE": "Title"
+  },
+  "VIEWOBS": {
+    "OBS": "Observation",
+    "EDIT": "Edit",
+    "SPEC": "Species",
+    "DATE": "Date",
+    "LOCATION": "Location",
+    "DESCR": "Description",
+    "TYPE": "Type"
+  },
+  "MAP": {
+    "PICKLOC": "Choose a location",
+    "LOC": "Location",
+    "MYLOC": "My location",
+    "CLICKMAP": "Click on the map to pick a location",
+    "READY": "Done"
+  },
+  "MYOBS": {
+    "MYOBS": "My Observations",
+    "NOOBS": "No observations",
+    "SEARCHCR": "Search criteria",
+    "SORTCR": "Sort order",
+    "LATINNAME": "Latin name",
+    "SEARCH": "Search",
+    "SHOWALL": "Show all",
+    "RESET": "Reset form",
+    "STARTDATE": "Start date",
+    "ENDDATE": "End date",
+    "SORTBY": "Sort by",
+    "NAME": "Name",
+    "DATE": "Date",
+    "ORDER": "Order",
+    "ASCENDING": "Ascending",
+    "DESCENDING": "Descending",
+    "SORT": "Sort",
+    "SELECTTYPE": "Please select a type!",
+    "AREUSURE": "Are you sure?",
+    "TITLE": "Otsikko",
+    "TYPE": "Tyyppi"
+  },
+  "OBSTYPE": {
+    "LANDSCAPE": "Landscape",
+    "BIRD": "Bird",
+    "MAMMAL": "Mammal",
+    "FISH": "Fish",
+    "REPTAMPH": "Reptile/amphibian",
+    "BUTTERFLY": "Butterfly",
+    "INSECT": "Insect",
+    "PLANT": "Plant",
+    "MUSHROOM": "Mushroom",
+    "WEATHER": "Weather",
+    "OTHER": "Other"
   }
 }

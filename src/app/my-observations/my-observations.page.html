@@ -1,0 +1,48 @@
+<app-nobs-header text="MYOBS.MYOBS"></app-nobs-header>
+
+<ion-content padding>
+  <div class="search-sort">
+    <ion-button expand="full" color="light" (click)="toggleSearchCriteria()">
+      <div class="flex-button">
+        &nbsp;
+        <span>{{ 'MYOBS.SEARCHCR' | translate }}</span>
+        <ion-icon [name]="searchSortIcon"></ion-icon>
+      </div>
+    </ion-button>
+
+    <div [hidden]="!searchCriteriaOpen" class="search-sort-criteria">
+      <ion-item>
+        <app-observation-type-entry *ngIf="searchObservationType" [observationType]="searchObservationType"></app-observation-type-entry>
+        <ion-button (click)="openTypeModal()">{{ 'NEWOBS.SELECTTYPE' | translate }}</ion-button>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">{{ 'MYOBS.STARTDATE' | translate }}</ion-label>
+        <ion-datetime
+          displayFormat="D.M.YYYY HH:mm"
+          [(ngModel)]="searchStartDateString"
+        ></ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">{{ 'MYOBS.ENDDATE' | translate }}</ion-label>
+        <ion-datetime
+          displayFormat="D.M.YYYY HH:mm"
+          [(ngModel)]="searchEndDateString"
+        ></ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-button (click)="search()">{{ 'MYOBS.SEARCH' | translate }}</ion-button>
+      </ion-item>
+
+      <ion-item>
+        <ion-button (click)="showAll()">{{ 'MYOBS.SHOWALL' | translate }}</ion-button>
+      </ion-item>
+
+      <ion-item>
+        <ion-button (click)="resetForm()">{{ 'MYOBS.RESET' | translate }}</ion-button>
+      </ion-item>
+    </div>
+  </div>
+</ion-content>

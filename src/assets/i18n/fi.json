@@ -1,5 +1,88 @@
 {
   "APP": {
+    "HOME": "Alkuun",
+    "NEWOBS": "Uusi havainto",
+    "CREDITS": "Credits",
+    "DEBUG": "Debug",
     "TITLE": "Ionic-sovellus"
+  },
+  "HOME": {
+    "NOBS": "Luontohavainnot",
+    "NEWOBS": "Uusi havainto",
+    "MYOBS": "Omat havainnot",
+    "IDGUIDE": "Määritysopas",
+    "DB": "Kasvitietokanta",
+    "DEBUG": "Debug",
+    "CREDITS": "Credits"
+  },
+  "PAC": {
+    "PLANT": "Kasvilaji"
+  },
+  "NEWOBS": {
+    "NEWOBS": "Uusi havainto",
+    "EDITOBS": "Muokkaa havaintoa",
+    "TAKEPIC": "Ota kuva",
+    "FILE": "Tiedosto",
+    "LATINNAME": "Tieteellinen nimi",
+    "LOCATION": "Sijainti",
+    "PICKLOC": "Valitse sijainti",
+    "DESCR": "Kuvaus",
+    "SAVE": "Tallenna",
+    "PICKPLT": "Kasvilajia ei ole valittu!",
+    "SELECTTYPE": "Valitse tyyppi",
+    "TYPE": "Tyyppi",
+    "TITLE": "Otsikko"
+  },
+  "VIEWOBS": {
+    "OBS": "Havainto",
+    "EDIT": "Muokkaa",
+    "SPEC": "Laji",
+    "DATE": "Päivämäärä",
+    "LOCATION": "Sijainti",
+    "DESCR": "Kuvaus",
+    "TYPE": "Tyyppi"
+  },
+  "MAP": {
+    "PICKLOC": "Valitse sijainti",
+    "LOC": "Paikka",
+    "MYLOC": "Oma sijainti",
+    "CLICKMAP": "Klikkaa karttaa valitaksesi sijainnin",
+    "READY": "Valmis"
+  },
+  "MYOBS": {
+    "MYOBS": "Omat havainnot",
+    "NOOBS": "Ei havaintoja",
+    "SEARCHCR": "Hakukriteerit",
+    "SORTCR": "Järjestys",
+    "LATINNAME": "Tieteellinen nimi",
+    "SEARCH": "Hae",
+    "SHOWALL": "Näytä kaikki",
+    "RESET": "Tyhjennä lomake",
+    "STARTDATE": "Alkupvm.",
+    "ENDDATE": "Loppupvm",
+    "SORTBY": "Lajittele",
+    "NAME": "Nimi",
+    "DATE": "Päivämäärä",
+    "ORDER": "Järjestys",
+    "ASCENDING": "Nouseva",
+    "DESCENDING": "Laskeva",
+    "SORT": "Lajittele",
+    "SELECTTYPE": "Valitse tyyppi!",
+    "AREUSURE": "Oletko varma?",
+    "TITLE": "Otsikko",
+    "TYPE": "Tyyppi"
+  },
+  "OBSTYPE": {
+    "LANDSCAPE": "Maisema",
+    "BIRD": "Lintu",
+    "MAMMAL": "Nisäkäs",
+    "FISH": "Kala",
+    "REPTAMPH": "Matelija/sammakkoeläin",
+    "BUTTERFLY": "Perhonen",
+    "INSECT": "Hyönteinen",
+    "PLANT": "Kasvi",
+    "MUSHROOM": "Sieni",
+    "WEATHER": "Sää",
+    "OTHER": "Muu"
   }
 }

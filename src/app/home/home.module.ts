@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+// import { RouterModule } from '@angular/router';
 
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -16,12 +16,12 @@ import { NobsHeaderComponent } from '../nobs-header/nobs-header.component';
     FormsModule,
     IonicModule,
     TranslateModule.forChild(),
-    RouterModule.forChild([
-      {
-        path: '',
-        component: HomePage
-      }
-    ])
+    // RouterModule.forChild([
+    //   {
+    //     path: '',
+    //     component: HomePage
+    //   }
+    // ])
   ],
   declarations: [HomePage, NobsHeaderComponent]
 })
