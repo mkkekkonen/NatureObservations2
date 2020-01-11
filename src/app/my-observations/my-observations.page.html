@@ -6,7 +6,7 @@
       <div class="flex-button">
         &nbsp;
         <span>{{ 'MYOBS.SEARCHCR' | translate }}</span>
-        <ion-icon [name]="searchSortIcon"></ion-icon>
+        <ion-icon [name]="searchIcon"></ion-icon>
       </div>
     </ion-button>
 
@@ -43,6 +43,37 @@
       <ion-item>
         <ion-button (click)="resetForm()">{{ 'MYOBS.RESET' | translate }}</ion-button>
       </ion-item>
+    </div>
+  </div>
+
+  <div class="search-sort">
+    <ion-button expand="full" color="light" (click)="toggleSortCriteria()">
+      <div class="flex-button">
+        &nbsp;
+        <span>{{ 'MYOBS.SORTCR' | translate }}</span>
+        <ion-icon [name]="sortIcon"></ion-icon>
+      </div>
+    </ion-button>
+
+    <div [hidden]="!sortCriteriaOpen" class="search-sort-criteria">
+      <ion-list>
+        <ion-item>
+          <ion-label position="stacked">{{ 'MYOBS.SORTBY' | translate }}</ion-label>
+          <ion-select [(ngModel)]="sortBy">
+            <ion-select-option [value]="SORT_BY_TITLE">{{ 'MYOBS.TITLE' | translate }}</ion-select-option>
+            <ion-select-option [value]="SORT_BY_TYPE">{{ 'MYOBS.TYPE' | translate }}</ion-select-option>
+            <ion-select-option [value]="SORT_BY_DATE">{{ 'MYOBS.DATE' | translate }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">{{ 'MYOBS.ORDER' | translate }}</ion-label>
+          <ion-select [(ngModel)]="sortOrder">
+            <ion-select-option [value]="SORT_ASCENDING">{{ 'MYOBS.ASCENDING' | translate }}</ion-select-option>
+            <ion-select-option [value]="SORT_DESCENDING">{{ 'MYOBS.DESCENDING' | translate }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
     </div>
   </div>
 </ion-content>

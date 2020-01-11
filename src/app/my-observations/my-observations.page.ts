@@ -9,22 +9,41 @@ import { ObservationType } from '../models';
 })
 export class MyObservationsPage implements OnInit {
   searchCriteriaOpen: boolean = false;
+  sortCriteriaOpen: boolean = false;
 
   searchObservationType: ObservationType = null;
   searchStartDateString: string = null;
   searchEndDateString: string = null;
+
+  SORT_BY_TITLE = 'title';
+  SORT_BY_TYPE = 'type';
+  SORT_BY_DATE = 'date';
+
+  SORT_ASCENDING = 'ascending';
+  SORT_DESCENDING = 'descending';
+
+  sortBy = this.SORT_BY_DATE;
+  sortOrder = this.SORT_DESCENDING;
 
   constructor() { }
 
   ngOnInit() {
   }
 
-  get searchSortIcon() {
+  get searchIcon() {
     return this.searchCriteriaOpen ? 'arrow-up' : 'arrow-down';
+  }
+
+  get sortIcon() {
+    return this.sortCriteriaOpen ? 'arrow-up' : 'arrow-down';
   }
 
   toggleSearchCriteria() {
     this.searchCriteriaOpen = !this.searchCriteriaOpen;
+  }
+
+  toggleSortCriteria() {
+    this.sortCriteriaOpen = !this.sortCriteriaOpen;
   }
 
   openTypeModal() {
