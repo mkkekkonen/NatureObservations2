@@ -13,6 +13,8 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['app.component.scss']
 })
 export class AppComponent {
+  pages: { text: string, url: string[] }[];
+
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -21,6 +23,10 @@ export class AppComponent {
     private globalization: Globalization,
   ) {
     this.initializeApp();
+
+    this.pages = [
+      { text: 'APP.HOME', url: ['/home'] },
+    ];
   }
 
   initializeApp() {

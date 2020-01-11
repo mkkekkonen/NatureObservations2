@@ -15,7 +15,9 @@
           </select>
         </ion-item>
 
-        <!-- TODO: routing -->
+        <ion-item *ngFor="let page of pages">
+          <ion-button [routerLink]="page.url">{{ page.text | translate }}</ion-button>
+        </ion-item>
       </ion-list>
     </ion-content>
   </ion-menu>
