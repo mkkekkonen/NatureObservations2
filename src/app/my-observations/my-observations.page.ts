@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ObservationType } from '../models';
+import { Repository } from 'typeorm';
+
+import { Observation, ObservationType } from '../models';
+import { DbService } from '../db.service';
 
 @Component({
   selector: 'app-my-observations',
@@ -25,9 +28,15 @@ export class MyObservationsPage implements OnInit {
   sortBy = this.SORT_BY_DATE;
   sortOrder = this.SORT_DESCENDING;
 
-  constructor() { }
+  observationTypes: ObservationType[] = null;
+
+  constructor(private dbService: DbService) {}
 
   ngOnInit() {
+    this.dbService.getConnection().then(async connection => {
+      const typeRepository = connection.getRepository('observationtype') as Repository<ObservationType>;
+      this.observationTypes = await typeRepository.find();
+    })
   }
 
   get searchIcon() {

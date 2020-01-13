@@ -6,6 +6,12 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Globalization } from '@ionic-native/globalization/ngx';
 
 import { TranslateService } from '@ngx-translate/core';
+import { Repository } from 'typeorm';
+
+import { DbService } from './db.service';
+import { ObservationType } from './models/observation-type';
+
+import observationTypes from '../assets/json/observation-types';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +27,7 @@ export class AppComponent {
     private statusBar: StatusBar,
     private translateService: TranslateService,
     private globalization: Globalization,
+    private dbService: DbService,
   ) {
     this.initializeApp();
 
@@ -29,8 +36,8 @@ export class AppComponent {
     ];
   }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
+  async initializeApp() {
+    this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
 
@@ -46,7 +53,28 @@ export class AppComponent {
               this.setLanguage('en');
           });
       }
+
+      await this.initializeObservationTypes();
     });
+  }
+
+  async initializeObservationTypes() {
+    const connection = await this.dbService.getConnection();
+
+    const typeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
+
+    if ((await typeRepository.count()) > 0) {
+      return;
+    }
+
+    const types = observationTypes.map(typeData => {
+      const observationType = new ObservationType();
+      observationType.name = typeData.name;
+      observationType.imageFileName = typeData.icon;
+      return observationType;
+    });
+
+    await typeRepository.save(types);
   }
 
   setLanguage(lang: string) {

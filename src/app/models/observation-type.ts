@@ -1,5 +1,20 @@
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+
+import { Observation } from './observation';
+
+@Entity('observationtype')
 export class ObservationType {
-  constructor(public name: string, public imageFileName: string) {}
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column()
+  imageFileName: string;
+
+  @OneToMany(t => Observation, observation => observation.type)
+  observations: Observation[];
 
   get translationKey() {
     return `OBSTYPE.${this.name}`;

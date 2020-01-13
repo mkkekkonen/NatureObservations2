@@ -1,0 +1,11 @@
+export const LANDSCAPE = 'LANDSCAPE';
+export const BIRD = 'BIRD';
+export const MAMMAL = 'MAMMAL';
+export const FISH = 'FISH';
+export const REPTAMPH = 'REPTAMPH'; // reptile/amphibian
+export const BUTTERFLY = 'BUTTERFLY';
+export const INSECT = 'INSECT';
+export const PLANT = 'PLANT';
+export const MUSHROOM = 'MUSHROOM';
+export const WEATHER = 'WEATHER';
+export const OTHER = 'OTHER';
