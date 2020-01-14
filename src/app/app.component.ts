@@ -7,9 +7,10 @@ import { Globalization } from '@ionic-native/globalization/ngx';
 
 import { TranslateService } from '@ngx-translate/core';
 import { Repository } from 'typeorm';
+import * as moment from 'moment';
 
 import { DbService } from './db.service';
-import { ObservationType } from './models/observation-type.entity';
+import { ObservationType, Observation, MapLocation } from './models';
 
 import observationTypes from '../assets/json/observation-types';
 
@@ -55,6 +56,7 @@ export class AppComponent {
       }
 
       await this.initializeObservationTypes();
+      await this.initializeObservations();
     });
   }
 
@@ -75,6 +77,35 @@ export class AppComponent {
     });
 
     await typeRepository.save(types);
+  }
+
+  async initializeObservations() {
+    const connection = await this.dbService.getConnection();
+
+    const observationRepository = await connection.getRepository('observation') as Repository<Observation>;
+    const observationTypeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
+    const mapLocationRepository = await connection.getRepository('maplocation') as Repository<MapLocation>;
+
+    if ((await observationRepository.count() > 0)) {
+      return;
+    }
+
+    const obsType = await observationTypeRepository.findOne();
+
+    const observation = new Observation();
+    observation.title = 'Testi';
+    observation.description = 'Testi';
+    observation.date = moment.default().format('YYYY-MM-DD HH:mm:ss');
+    observation.type = obsType;
+
+    const mapLocation = new MapLocation();
+    mapLocation.name = 'Mansesteri';
+    mapLocation.latitude = 61.497480;
+    mapLocation.longitude = 23.757250;
+    mapLocation.observation = observation;
+
+    await observationRepository.save(observation);
+    await mapLocationRepository.save(mapLocation);
   }
 
   setLanguage(lang: string) {

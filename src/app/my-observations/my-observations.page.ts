@@ -29,13 +29,17 @@ export class MyObservationsPage implements OnInit {
   sortOrder = this.SORT_DESCENDING;
 
   observationTypes: ObservationType[] = null;
+  observations: Observation[] = null;
 
   constructor(private dbService: DbService) {}
 
   ngOnInit() {
     this.dbService.getConnection().then(async connection => {
-      const typeRepository = connection.getRepository(ObservationType);
+      const typeRepository = connection.getRepository('observationtype') as Repository<ObservationType>;
+      const observationRepository = connection.getRepository('observation') as Repository<Observation>;
+
       this.observationTypes = await typeRepository.find();
+      this.observations = await observationRepository.find();
     })
   }
 

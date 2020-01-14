@@ -1,1 +1,1 @@
-ionic serve --external -lc
+ionic serve --external -lc -- --sourceMap=true

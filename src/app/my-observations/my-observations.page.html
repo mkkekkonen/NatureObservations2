@@ -77,9 +77,9 @@
     </div>
 
     <ion-list>
-      <ion-item *ngFor="let t of observationTypes">
-        <img [src]="t.imageUrl" width="50" style="padding-right: 1rem;" />
-        <span>{{ t.translationKey | translate }}</span>
+      <ion-item *ngFor="let o of observations">
+        <!-- <img [src]="t.imageUrl" width="50" style="padding-right: 1rem;" /> -->
+        <span>{{ o.toString() }}</span>
       </ion-item>
     </ion-list>
   </div>

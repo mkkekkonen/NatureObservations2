@@ -19,9 +19,11 @@ export class Observation {
   @ManyToOne(t => ObservationType, observationType => observationType.observations)
   type: ObservationType;
 
-  @OneToOne(t => MapLocation, mapLocation => mapLocation.observation)
+  @OneToOne(t => MapLocation, mapLocation => mapLocation.observation, { nullable: true })
   mapLocation: MapLocation;
 
-  @OneToOne(t => ImgData, imgData => imgData.observation)
+  @OneToOne(t => ImgData, imgData => imgData.observation, { nullable: true })
   imgData: ImgData;
+
+  toString = () => `${this.title}: ${this.description}; ${this.date}; ${this.type && this.type.name}`;
 }
