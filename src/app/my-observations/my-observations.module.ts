@@ -11,9 +11,8 @@ import { MyObservationsPageRoutingModule } from './my-observations-routing.modul
 
 import { MyObservationsPage } from './my-observations.page';
 
-import { ObservationTypeEntryComponent } from '../observation-type-entry/observation-type-entry.component';
-
 import { ComponentsModule } from '../components/components.module';
+import { ObservationCardModule } from '../observation-card/observation-card.module';
 
 @NgModule({
   imports: [
@@ -23,10 +22,10 @@ import { ComponentsModule } from '../components/components.module';
     TranslateModule.forChild(),
     MyObservationsPageRoutingModule,
     ComponentsModule,
+    ObservationCardModule,
   ],
   declarations: [
     MyObservationsPage,
-    ObservationTypeEntryComponent,
   ],
 })
 export class MyObservationsPageModule {}

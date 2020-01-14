@@ -76,10 +76,11 @@
       </ion-list>
     </div>
 
-    <ion-list>
-      <ion-item *ngFor="let o of observations">
-        <!-- <img [src]="t.imageUrl" width="50" style="padding-right: 1rem;" /> -->
-        <span>{{ o.toString() }}</span>
+    <p *ngIf="observations && observations.length === 0">{{ 'MYOBS.NOOBS' | translate }}</p>
+
+    <ion-list lines="none">
+      <ion-item *ngFor="let observation of observations">
+        <app-observation-card [observation]="observation"></app-observation-card>
       </ion-item>
     </ion-list>
   </div>

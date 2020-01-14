@@ -5,9 +5,13 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { NobsHeaderComponent } from '../nobs-header/nobs-header.component';
+import { ObservationTypeEntryComponent } from '../observation-type-entry/observation-type-entry.component';
 
 @NgModule({
-  declarations: [NobsHeaderComponent],
+  declarations: [
+    NobsHeaderComponent,
+    ObservationTypeEntryComponent,
+  ],
   imports: [
     CommonModule,
     IonicModule,
@@ -15,6 +19,7 @@ import { NobsHeaderComponent } from '../nobs-header/nobs-header.component';
   ],
   exports: [
     NobsHeaderComponent,
+    ObservationTypeEntryComponent,
   ]
 })
 export class ComponentsModule { }
