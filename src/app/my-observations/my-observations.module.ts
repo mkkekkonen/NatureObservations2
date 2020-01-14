@@ -11,8 +11,9 @@ import { MyObservationsPageRoutingModule } from './my-observations-routing.modul
 
 import { MyObservationsPage } from './my-observations.page';
 
-import { NobsHeaderComponent } from '../nobs-header/nobs-header.component';
 import { ObservationTypeEntryComponent } from '../observation-type-entry/observation-type-entry.component';
+
+import { ComponentsModule } from '../components/components.module';
 
 @NgModule({
   imports: [
@@ -20,11 +21,11 @@ import { ObservationTypeEntryComponent } from '../observation-type-entry/observa
     FormsModule,
     IonicModule,
     TranslateModule.forChild(),
-    MyObservationsPageRoutingModule
+    MyObservationsPageRoutingModule,
+    ComponentsModule,
   ],
   declarations: [
     MyObservationsPage,
-    NobsHeaderComponent,
     ObservationTypeEntryComponent,
   ],
 })

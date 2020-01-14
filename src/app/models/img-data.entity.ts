@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 
-import { Observation } from './observation';
+import { Observation } from './observation.entity';
 
 @Entity('imgdata')
 export class ImgData {

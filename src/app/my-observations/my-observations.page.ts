@@ -34,7 +34,7 @@ export class MyObservationsPage implements OnInit {
 
   ngOnInit() {
     this.dbService.getConnection().then(async connection => {
-      const typeRepository = connection.getRepository('observationtype') as Repository<ObservationType>;
+      const typeRepository = connection.getRepository(ObservationType);
       this.observationTypes = await typeRepository.find();
     })
   }

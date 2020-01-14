@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Repository } from 'typeorm';
 
 import { DbService } from './db.service';
-import { ObservationType } from './models/observation-type';
+import { ObservationType } from './models/observation-type.entity';
 
 import observationTypes from '../assets/json/observation-types';
 

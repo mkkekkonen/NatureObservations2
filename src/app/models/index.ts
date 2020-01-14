@@ -1,4 +1,4 @@
-export { Observation } from './observation';
-export { ObservationType } from './observation-type';
-export { ImgData } from './img-data';
-export { MapLocation } from './map-location';
+export { Observation } from './observation.entity';
+export { ObservationType } from './observation-type.entity';
+export { ImgData } from './img-data.entity';
+export { MapLocation } from './map-location.entity';

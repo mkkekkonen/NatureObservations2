@@ -15,6 +15,8 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 
+import { ComponentsModule } from './components/components.module';
+
 export const createTranslateLoader = (http: HttpClient) => new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 
 @NgModule({
@@ -32,6 +34,7 @@ export const createTranslateLoader = (http: HttpClient) => new TranslateHttpLoad
         deps: [HttpClient],
       },
     }),
+    ComponentsModule,
   ],
   providers: [
     StatusBar,

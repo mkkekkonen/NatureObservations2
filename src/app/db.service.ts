@@ -25,7 +25,7 @@ export class DbService {
       database: 'nobs',
       location: 'default',
       synchronize: true,
-      logging: ['error', 'query', 'schema'],
+      logging: 'all',
       entities: [
         Observation,
         ObservationType,
