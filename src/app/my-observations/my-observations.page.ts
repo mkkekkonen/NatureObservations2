@@ -31,6 +31,8 @@ export class MyObservationsPage implements OnInit {
   observationTypes: ObservationType[] = null;
   observations: Observation[] = null;
 
+  newObservationUrl = ['/edit-observation'];
+
   constructor(private dbService: DbService) {}
 
   ngOnInit() {

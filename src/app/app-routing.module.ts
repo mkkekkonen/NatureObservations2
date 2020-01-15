@@ -7,6 +7,10 @@ const routes: Routes = [
     path: 'home',
     loadChildren: () => import('./my-observations/my-observations.module').then( m => m.MyObservationsPageModule)
   },
+  {
+    path: 'edit-observation',
+    loadChildren: () => import('./edit-observation/edit-observation.module').then( m => m.EditObservationPageModule)
+  },
 ];
 
 @NgModule({

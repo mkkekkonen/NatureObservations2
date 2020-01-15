@@ -1,0 +1,30 @@
+<app-nobs-header [text]="title | translate"></app-nobs-header>
+
+<ion-content>
+  <div class="image-container">
+    <div class="image-placeholder" *ngIf="!observation.imgData">
+      <ion-icon name="image"></ion-icon>
+    </div>
+  </div>
+
+  <div class="image-button-container">
+    <ion-button>{{ 'NEWOBS.TAKEPIC' | translate }}</ion-button>
+    <ion-button>{{ 'NEWOBS.FILE' | translate }}</ion-button>
+  </div>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>{{ 'NEWOBS.DESCR' | translate }}</ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-label position="stacked">{{ 'NEWOBS.TITLE' | translate }}</ion-label>
+      <ion-input [(ngModel)]="observation.title"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">{{ 'NEWOBS.DESCR' | translate }}</ion-label>
+      <ion-textarea [(ngModel)]="observation.description"></ion-textarea>
+    </ion-item>
+  </ion-list>
+</ion-content>
