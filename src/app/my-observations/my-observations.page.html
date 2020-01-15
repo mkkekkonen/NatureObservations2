@@ -75,13 +75,19 @@
         </ion-item>
       </ion-list>
     </div>
-
-    <p *ngIf="observations && observations.length === 0">{{ 'MYOBS.NOOBS' | translate }}</p>
-
-    <ion-list lines="none">
-      <ion-item *ngFor="let observation of observations">
-        <app-observation-card [observation]="observation"></app-observation-card>
-      </ion-item>
-    </ion-list>
   </div>
+
+  <p *ngIf="observations && observations.length === 0">{{ 'MYOBS.NOOBS' | translate }}</p>
+
+  <ion-list lines="none">
+    <ion-item *ngFor="let observation of observations">
+      <app-observation-card [observation]="observation"></app-observation-card>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
