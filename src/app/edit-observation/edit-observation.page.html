@@ -26,5 +26,26 @@
       <ion-label position="stacked">{{ 'NEWOBS.DESCR' | translate }}</ion-label>
       <ion-textarea [(ngModel)]="observation.description"></ion-textarea>
     </ion-item>
+
+    <ion-list-header>
+      <ion-label>{{ 'NEWOBS.TYPE' | translate }}</ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <app-observation-type-entry *ngIf="observation.type" [observationType]="observation.type"></app-observation-type-entry>
+      <ion-button slot="start">{{ 'NEWOBS.SELECTTYPE' | translate }}</ion-button>
+    </ion-item>
+
+    <ion-list-header>{{ 'NEWOBS.LOCATION' | translate }}</ion-list-header>
+
+    <div ion-item>
+      <div item-content class="debug-map-container"></div>
+    </div>
+
+    <ion-item>
+      <ion-button slot="start">{{ 'NEWOBS.PICKLOC' | translate }}</ion-button>
+    </ion-item>
   </ion-list>
+
+  <ion-button expand="full">{{ 'NEWOBS.SAVE' | translate }}</ion-button>
 </ion-content>
