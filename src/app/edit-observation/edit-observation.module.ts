@@ -9,6 +9,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EditObservationPageRoutingModule } from './edit-observation-routing.module';
 
 import { EditObservationPage } from './edit-observation.page';
+import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
+import { ObservationTypeModalPageModule } from '../observation-type-modal/observation-type-modal.module';
 
 import { ComponentsModule } from '../components/components.module';
 
@@ -19,8 +21,10 @@ import { ComponentsModule } from '../components/components.module';
     IonicModule,
     TranslateModule.forChild(),
     ComponentsModule,
+    ObservationTypeModalPageModule,
     EditObservationPageRoutingModule,
   ],
-  declarations: [EditObservationPage]
+  declarations: [EditObservationPage],
+  entryComponents: [ObservationTypeModalPage],
 })
 export class EditObservationPageModule {}

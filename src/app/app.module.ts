@@ -18,6 +18,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { ComponentsModule } from './components/components.module';
+import { MyObservationsPageModule } from './my-observations/my-observations.module';
+import { EditObservationPageModule } from './edit-observation/edit-observation.module';
 
 export const createTranslateLoader = (http: HttpClient) => new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 
@@ -37,6 +39,8 @@ export const createTranslateLoader = (http: HttpClient) => new TranslateHttpLoad
       },
     }),
     ComponentsModule,
+    MyObservationsPageModule,
+    EditObservationPageModule,
   ],
   providers: [
     StatusBar,

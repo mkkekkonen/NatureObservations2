@@ -1,15 +1,18 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
+import { MyObservationsPage } from './my-observations/my-observations.page';
+import { EditObservationPage } from './edit-observation/edit-observation.page';
+
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
     path: 'home',
-    loadChildren: () => import('./my-observations/my-observations.module').then( m => m.MyObservationsPageModule)
+    component: MyObservationsPage,
   },
   {
     path: 'edit-observation',
-    loadChildren: () => import('./edit-observation/edit-observation.module').then( m => m.EditObservationPageModule)
+    component: EditObservationPage,
   },
 ];
 

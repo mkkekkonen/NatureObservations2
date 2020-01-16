@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
 
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 
 import { Observation, ImgData } from '../models';
+import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
 
 const PHOTO_DEBUG = true;
 
@@ -19,10 +20,13 @@ export class EditObservationPage implements OnInit {
   cameraOptions: CameraOptions;
   photoLibraryOptions: CameraOptions;
 
+  modal: any;
+
   constructor(
     private platform: Platform,
     private camera: Camera,
     private filePath: FilePath,
+    private modalController: ModalController,
   ) {
     const commonCameraOptions: CameraOptions = {
       quality: 100,
@@ -78,5 +82,16 @@ export class EditObservationPage implements OnInit {
     } catch(e) {
       window.alert(e.message);
     }
+  }
+
+  async openTypeModal() {
+    const modal = await this.modalController.create({
+      component: ObservationTypeModalPage,
+    });
+    modal.onDidDismiss().then(event => {
+      const { observationType } = event.data;
+      this.observation.type = observationType;
+    });
+    await modal.present();
   }
 }
