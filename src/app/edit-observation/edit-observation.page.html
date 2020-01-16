@@ -5,11 +5,12 @@
     <div class="image-placeholder" *ngIf="!observation.imgData">
       <ion-icon name="image"></ion-icon>
     </div>
+    <img *ngIf="imageUrl" [src]="imageUrl" />
   </div>
 
   <div class="image-button-container">
-    <ion-button>{{ 'NEWOBS.TAKEPIC' | translate }}</ion-button>
-    <ion-button>{{ 'NEWOBS.FILE' | translate }}</ion-button>
+    <ion-button (click)="takePicture()">{{ 'NEWOBS.TAKEPIC' | translate }}</ion-button>
+    <ion-button (click)="takePicture('photoLibrary')">{{ 'NEWOBS.FILE' | translate }}</ion-button>
   </div>
 
   <ion-list>
