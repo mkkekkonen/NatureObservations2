@@ -9,6 +9,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Globalization } from '@ionic-native/globalization/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 import { TranslateModule, TranslateLoader, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -51,6 +52,7 @@ export const createTranslateLoader = (http: HttpClient) => new TranslateHttpLoad
     HttpClient,
     Camera,
     FilePath,
+    Geolocation,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

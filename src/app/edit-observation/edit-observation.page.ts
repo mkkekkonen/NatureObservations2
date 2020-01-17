@@ -3,11 +3,17 @@ import { Platform, ModalController } from '@ionic/angular';
 
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+
+import * as L from 'leaflet';
+import 'leaflet-providers';
 
 import { Observation, ImgData } from '../models';
 import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
+import { thunderforestApiKey } from '../secrets.json';
 
 const PHOTO_DEBUG = true;
+const USE_GEOLOCATION = false;
 
 @Component({
   selector: 'app-edit-observation',
@@ -22,11 +28,15 @@ export class EditObservationPage implements OnInit {
 
   modal: any;
 
+  map: L.Map;
+  marker: L.Marker;
+
   constructor(
     private platform: Platform,
     private camera: Camera,
     private filePath: FilePath,
     private modalController: ModalController,
+    private geolocation: Geolocation,
   ) {
     const commonCameraOptions: CameraOptions = {
       quality: 100,
@@ -47,6 +57,9 @@ export class EditObservationPage implements OnInit {
   }
 
   ngOnInit() {
+    this.platform.ready().then(() => {
+      this.initLeafletMap();
+    });
   }
 
   get title() {
@@ -93,5 +106,28 @@ export class EditObservationPage implements OnInit {
       this.observation.type = observationType;
     });
     await modal.present();
+  }
+
+  async initLeafletMap() {
+    if (USE_GEOLOCATION) {
+      const currentPosition = await this.geolocation.getCurrentPosition();
+      const latLng = L.latLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
+      this.createLeafletMap(latLng);
+    } else {
+      const latLng =  L.latLng(61.497, 23.760);
+      this.createLeafletMap(latLng);
+    }
+  }
+
+  createLeafletMap(latLng: L.LatLng) {
+    this.map = L.map(
+      'map',
+      {
+        zoomControl: false,
+        touchZoom: false,
+        doubleClickZoom: false,
+      }
+    ).setView(latLng, 15);
+    L.tileLayer.provider('Thunderforest.Outdoors', { apikey: thunderforestApiKey }).addTo(this.map);
   }
 }
