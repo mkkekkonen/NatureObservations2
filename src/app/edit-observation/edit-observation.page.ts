@@ -129,5 +129,8 @@ export class EditObservationPage implements OnInit {
       }
     ).setView(latLng, 15);
     L.tileLayer.provider('Thunderforest.Outdoors', { apikey: thunderforestApiKey }).addTo(this.map);
+    setTimeout(() => {
+      this.map.invalidateSize();
+    }, 1000);
   }
 }
