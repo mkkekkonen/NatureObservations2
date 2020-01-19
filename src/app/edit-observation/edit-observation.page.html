@@ -39,12 +39,14 @@
 
     <ion-list-header>{{ 'NEWOBS.LOCATION' | translate }}</ion-list-header>
 
+    <ion-item *ngIf="observation?.mapLocation?.name">{{ observation.mapLocation.name }}</ion-item>
+
     <div ion-item>
       <div item-content #map id="map"></div>
     </div>
 
     <ion-item>
-      <ion-button slot="start">{{ 'NEWOBS.PICKLOC' | translate }}</ion-button>
+      <ion-button (click)="openMapModal()">{{ 'NEWOBS.PICKLOC' | translate }}</ion-button>
     </ion-item>
   </ion-list>
 

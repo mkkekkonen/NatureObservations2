@@ -1,0 +1,25 @@
+<app-nobs-header [text]="'MAP.PICKLOC' | translate"></app-nobs-header>
+
+<ion-content>
+  <div class="scroll-container">
+    <div class="button-container">
+      <ion-button (click)="getMyLocation()">{{ 'MAP.MYLOC' | translate }}</ion-button>
+    </div>
+
+    <p>{{ 'MAP.CLICKMAP' | translate }}</p>
+
+    <div #map id="modalMap"></div>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+    <ion-fab-button (click)="cancel()">
+      <ion-icon name="arrow-round-back"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="confirm()">
+      <ion-icon name="checkmark"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

@@ -11,6 +11,8 @@ import { EditObservationPageRoutingModule } from './edit-observation-routing.mod
 import { EditObservationPage } from './edit-observation.page';
 import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
 import { ObservationTypeModalPageModule } from '../observation-type-modal/observation-type-modal.module';
+import { MapModalPageModule } from '../map-modal/map-modal.module';
+import { MapModalPage } from '../map-modal/map-modal.page';
 
 import { ComponentsModule } from '../components/components.module';
 
@@ -22,9 +24,13 @@ import { ComponentsModule } from '../components/components.module';
     TranslateModule.forChild(),
     ComponentsModule,
     ObservationTypeModalPageModule,
+    MapModalPageModule,
     EditObservationPageRoutingModule,
   ],
   declarations: [EditObservationPage],
-  entryComponents: [ObservationTypeModalPage],
+  entryComponents: [
+    ObservationTypeModalPage,
+    MapModalPage,
+  ],
 })
 export class EditObservationPageModule {}

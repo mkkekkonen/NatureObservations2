@@ -13,15 +13,15 @@
     </ion-radio-group>
   </ion-list>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="confirm()">
-      <ion-icon name="checkmark"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-
   <ion-fab vertical="bottom" horizontal="start" slot="fixed">
     <ion-fab-button (click)="cancel()">
       <ion-icon name="arrow-round-back"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="confirm()">
+      <ion-icon name="checkmark"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>

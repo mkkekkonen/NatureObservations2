@@ -10,10 +10,9 @@ import 'leaflet-providers';
 
 import { Observation, ImgData } from '../models';
 import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
+import { MapModalPage } from '../map-modal/map-modal.page';
+import { DebugService } from '../debug.service';
 import { thunderforestApiKey } from '../secrets.json';
-
-const PHOTO_DEBUG = true;
-const USE_GEOLOCATION = false;
 
 @Component({
   selector: 'app-edit-observation',
@@ -37,10 +36,11 @@ export class EditObservationPage implements OnInit {
     private filePath: FilePath,
     private modalController: ModalController,
     private geolocation: Geolocation,
+    private debugService: DebugService,
   ) {
     const commonCameraOptions: CameraOptions = {
       quality: 100,
-      destinationType: !PHOTO_DEBUG ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL,
+      destinationType: !debugService ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.PNG,
       mediaType: this.camera.MediaType.PICTURE,
     };
@@ -68,9 +68,9 @@ export class EditObservationPage implements OnInit {
 
   get imageUrl() {
     if (this.observation.imgData) {
-      if (PHOTO_DEBUG && this.observation.imgData.debugDataUri) {
+      if (this.debugService.debugMode && this.observation.imgData.debugDataUri) {
         return this.observation.imgData.debugDataUri;
-      } else if (!PHOTO_DEBUG && this.observation.imgData.fileUri) {
+      } else if (!this.debugService.debugMode && this.observation.imgData.fileUri) {
         return this.observation.imgData.fileUri;
       }
     }
@@ -85,7 +85,7 @@ export class EditObservationPage implements OnInit {
 
     try {
       this.observation.imgData = new ImgData();
-      if (!PHOTO_DEBUG) {
+      if (!this.debugService.debugMode) {
         const path = await this.filePath.resolveNativePath(imageUrl);
         this.observation.imgData.fileUri = path;
       } else {
@@ -109,7 +109,7 @@ export class EditObservationPage implements OnInit {
   }
 
   async initLeafletMap() {
-    if (USE_GEOLOCATION) {
+    if (!this.debugService.debugMode) {
       const currentPosition = await this.geolocation.getCurrentPosition();
       const latLng = L.latLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
       this.createLeafletMap(latLng);
@@ -126,11 +126,35 @@ export class EditObservationPage implements OnInit {
         zoomControl: false,
         touchZoom: false,
         doubleClickZoom: false,
+        dragging: false,
       }
     ).setView(latLng, 15);
     L.tileLayer.provider('Thunderforest.Outdoors', { apikey: thunderforestApiKey }).addTo(this.map);
     setTimeout(() => {
       this.map.invalidateSize();
     }, 1000);
+  }
+
+  async openMapModal() {
+    const modal = await this.modalController.create({
+      component: MapModalPage,
+    });
+    modal.onDidDismiss().then(event => {
+      if (event.data && event.data.mapLocation) {
+        this.observation.mapLocation = event.data.mapLocation;
+        const { latitude, longitude } = this.observation.mapLocation;
+        this.setLeafletMarkerAndPan(new L.LatLng(latitude, longitude));
+      }
+    });
+    await modal.present();
+  }
+
+  setLeafletMarkerAndPan(latLng: L.LatLng) {
+    if (!this.marker) {
+      this.marker = L.marker(latLng).addTo(this.map);
+    } else {
+      this.marker.setLatLng(latLng);
+    }
+    this.map.panTo(latLng);
   }
 }
