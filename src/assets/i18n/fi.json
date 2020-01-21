@@ -31,7 +31,8 @@
     "PICKPLT": "Kasvilajia ei ole valittu!",
     "SELECTTYPE": "Valitse tyyppi",
     "TYPE": "Tyyppi",
-    "TITLE": "Otsikko"
+    "TITLE": "Otsikko",
+    "DATE": "Päivämäärä"
   },
   "VIEWOBS": {
     "OBS": "Havainto",
@@ -84,5 +85,8 @@
     "MUSHROOM": "Sieni",
     "WEATHER": "Sää",
     "OTHER": "Muu"
+  },
+  "ERROR": {
+    "SAVE": "Virhe tallennettaessa havainnon tietoja"
   }
 }

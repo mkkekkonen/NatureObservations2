@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 
 import { Observation } from './observation.entity';
 
@@ -7,12 +7,13 @@ export class ImgData {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   fileUri: string;
 
-  @Column()
+  @Column({ nullable: true })
   debugDataUri: string;
 
-  @OneToOne(t => Observation)
+  @OneToOne(t => Observation, observation => observation.imgData)
+  @JoinColumn()
   observation: Observation;
 }

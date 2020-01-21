@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Platform, ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
@@ -7,11 +8,15 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 import * as L from 'leaflet';
 import 'leaflet-providers';
+import { TranslateService } from '@ngx-translate/core';
+import { Repository } from 'typeorm';
+import * as moment from 'moment';
 
-import { Observation, ImgData } from '../models';
+import { Observation, ImgData, MapLocation } from '../models';
 import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
 import { MapModalPage } from '../map-modal/map-modal.page';
 import { DebugService } from '../debug.service';
+import { DbService } from '../db.service';
 import { thunderforestApiKey } from '../secrets.json';
 
 @Component({
@@ -21,6 +26,7 @@ import { thunderforestApiKey } from '../secrets.json';
 })
 export class EditObservationPage implements OnInit {
   observation = new Observation();
+  time = moment.default().format('YYYY-MM-DDTHH:mm:ss');
 
   cameraOptions: CameraOptions;
   photoLibraryOptions: CameraOptions;
@@ -36,7 +42,10 @@ export class EditObservationPage implements OnInit {
     private filePath: FilePath,
     private modalController: ModalController,
     private geolocation: Geolocation,
+    private translateService: TranslateService,
+    private router: Router,
     private debugService: DebugService,
+    private dbService: DbService,
   ) {
     const commonCameraOptions: CameraOptions = {
       quality: 100,
@@ -142,6 +151,7 @@ export class EditObservationPage implements OnInit {
     modal.onDidDismiss().then(event => {
       if (event.data && event.data.mapLocation) {
         this.observation.mapLocation = event.data.mapLocation;
+        this.observation.mapLocation.observation = this.observation;
         const { latitude, longitude } = this.observation.mapLocation;
         this.setLeafletMarkerAndPan(new L.LatLng(latitude, longitude));
       }
@@ -156,5 +166,43 @@ export class EditObservationPage implements OnInit {
       this.marker.setLatLng(latLng);
     }
     this.map.panTo(latLng);
+  }
+
+  async save() {
+    if (!this.observation.type) {
+      window.alert(this.translateService.instant('MYOBS.SELECTTYPE'));
+      return;
+    }
+
+    // TODO: date
+
+    try {
+      const connection = await this.dbService.getConnection();
+
+      const observationRepository = await connection.getRepository('observation') as Repository<Observation>;
+
+      await observationRepository.save(this.observation);
+
+      if (this.observation.imgData) {
+        const imgDataRepository = await connection.getRepository('imgdata') as Repository<ImgData>;
+        if (!this.observation.imgData.id) {
+          await imgDataRepository.delete({ observation: this.observation });
+        }
+        await imgDataRepository.save(this.observation.imgData);
+      }
+
+      if (this.observation.mapLocation) {
+        const mapLocationRepository = await connection.getRepository('maplocation') as Repository<MapLocation>;
+        if (!this.observation.mapLocation.id) {
+          await mapLocationRepository.delete({ observation: this.observation });
+        }
+        await mapLocationRepository.save(this.observation.mapLocation);
+      }
+    } catch(e) {
+      window.alert(`${this.translateService.instant('ERROR.SAVE')}: ${e.message}`);
+      return;
+    }
+
+    await this.router.navigate(['/home']);
   }
 }

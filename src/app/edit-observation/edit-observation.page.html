@@ -28,6 +28,11 @@
       <ion-textarea [(ngModel)]="observation.description"></ion-textarea>
     </ion-item>
 
+    <ion-item>
+      <ion-label position="stacked">{{ 'NEWOBS.DATE' | translate }}</ion-label>
+      <ion-datetime [(ngModel)]="time" displayFormat="D.M.YYYY HH:mm"></ion-datetime>
+    </ion-item>
+
     <ion-list-header>
       <ion-label>{{ 'NEWOBS.TYPE' | translate }}</ion-label>
     </ion-list-header>
@@ -50,5 +55,5 @@
     </ion-item>
   </ion-list>
 
-  <ion-button expand="full">{{ 'NEWOBS.SAVE' | translate }}</ion-button>
+  <ion-button expand="full" (click)="save()">{{ 'NEWOBS.SAVE' | translate }}</ion-button>
 </ion-content>

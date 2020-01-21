@@ -84,5 +84,8 @@
     "MUSHROOM": "Mushroom",
     "WEATHER": "Weather",
     "OTHER": "Other"
+  },
+  "ERROR": {
+    "SAVE": "Error saving observation data"
   }
 }

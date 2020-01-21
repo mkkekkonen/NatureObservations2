@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 
 import { Observation } from './observation.entity';
 
@@ -16,6 +16,7 @@ export class MapLocation {
   @Column('real')
   longitude: number;
 
-  @OneToOne(t => Observation)
+  @OneToOne(t => Observation, observation => observation.mapLocation)
+  @JoinColumn()
   observation: Observation;
 }
