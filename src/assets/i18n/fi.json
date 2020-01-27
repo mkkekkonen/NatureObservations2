@@ -32,7 +32,9 @@
     "SELECTTYPE": "Valitse tyyppi",
     "TYPE": "Tyyppi",
     "TITLE": "Otsikko",
-    "DATE": "Päivämäärä"
+    "DATE": "Päivämäärä",
+    "SELECTTYPEEXCL": "Valitse havainnon tyyppi!",
+    "SELECTDATE": "Valitse päivämäärä!"
   },
   "VIEWOBS": {
     "OBS": "Havainto",

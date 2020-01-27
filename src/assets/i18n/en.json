@@ -31,7 +31,10 @@
     "PICKPLT": "No plant species has been chosen!",
     "SELECTTYPE": "Select type",
     "TYPE": "Type",
-    "TITLE": "Title"
+    "TITLE": "Title",
+    "DATE": "Date",
+    "SELECTTYPEEXCL": "Pick a type for the observation!",
+    "SELECTDATE": "Pick a date!"
   },
   "VIEWOBS": {
     "OBS": "Observation",

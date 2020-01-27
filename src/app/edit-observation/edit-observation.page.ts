@@ -19,6 +19,8 @@ import { DebugService } from '../debug.service';
 import { DbService } from '../db.service';
 import { thunderforestApiKey } from '../secrets.json';
 
+const componentDateFormat = 'YYYY-MM-DDTHH:mm:ss';
+
 @Component({
   selector: 'app-edit-observation',
   templateUrl: './edit-observation.page.html',
@@ -26,7 +28,7 @@ import { thunderforestApiKey } from '../secrets.json';
 })
 export class EditObservationPage implements OnInit {
   observation = new Observation();
-  time = moment.default().format('YYYY-MM-DDTHH:mm:ss');
+  time = moment.default().format(componentDateFormat);
 
   cameraOptions: CameraOptions;
   photoLibraryOptions: CameraOptions;
@@ -170,39 +172,41 @@ export class EditObservationPage implements OnInit {
 
   async save() {
     if (!this.observation.type) {
-      window.alert(this.translateService.instant('MYOBS.SELECTTYPE'));
+      window.alert(this.translateService.instant('NEWOBS.SELECTTYPEEXCL'));
       return;
     }
 
-    // TODO: date
+    if (!this.time) {
+      window.alert(this.translateService.instant('NEWOBS.SELECTDATE'));
+      return;
+    }
 
     try {
       const connection = await this.dbService.getConnection();
 
-      const observationRepository = await connection.getRepository('observation') as Repository<Observation>;
+      connection.transaction(async entityManager => {
+        this.observation.date = moment.default(this.time, componentDateFormat).format('YYYY-MM-DD HH:mm');
+        await entityManager.save(this.observation);
 
-      await observationRepository.save(this.observation);
-
-      if (this.observation.imgData) {
-        const imgDataRepository = await connection.getRepository('imgdata') as Repository<ImgData>;
-        if (!this.observation.imgData.id) {
-          await imgDataRepository.delete({ observation: this.observation });
+        if (this.observation.imgData) {
+          if (!this.observation.imgData.id) {
+            await entityManager.delete(ImgData, { observation: this.observation });
+          }
+          await entityManager.save(this.observation.imgData);
         }
-        await imgDataRepository.save(this.observation.imgData);
-      }
 
-      if (this.observation.mapLocation) {
-        const mapLocationRepository = await connection.getRepository('maplocation') as Repository<MapLocation>;
-        if (!this.observation.mapLocation.id) {
-          await mapLocationRepository.delete({ observation: this.observation });
+        if (this.observation.mapLocation) {
+          if (!this.observation.mapLocation.id) {
+            await entityManager.delete(MapLocation, { observation: this.observation });
+          }
+          await entityManager.save(this.observation.mapLocation);
         }
-        await mapLocationRepository.save(this.observation.mapLocation);
-      }
+      });
     } catch(e) {
-      window.alert(`${this.translateService.instant('ERROR.SAVE')}: ${e.message}`);
+      window.alert(`Virhe: ${e.message}`);
       return;
     }
 
-    await this.router.navigate(['/home']);
+    await this.router.navigate(['/home'])
   }
 }
