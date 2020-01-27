@@ -19,4 +19,10 @@ export class ObservationCardComponent implements OnInit {
   get formattedDate() {
     return moment.default(this.observation.date).format('D.M.YYYY HH:mm');
   }
+
+  get imgUrl() {
+    if (this.observation.imgData) {
+      return this.observation.imgData.fileUri || this.observation.imgData.debugDataUri;
+    }
+  }
 }

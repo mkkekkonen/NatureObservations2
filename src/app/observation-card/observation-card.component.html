@@ -1,5 +1,5 @@
 <ion-card>
-  <img *ngIf="observation.imgData" [src]="observation.imgData.fileUri || observation.imgData.debugDataUri" />
+  <img *ngIf="imgUrl" [src]="imgUrl" />
 
   <ion-card-header>
     <ion-card-title>{{ observation.title }}</ion-card-title>

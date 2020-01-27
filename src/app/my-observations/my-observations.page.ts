@@ -41,7 +41,7 @@ export class MyObservationsPage implements OnInit {
       const observationRepository = connection.getRepository('observation') as Repository<Observation>;
 
       this.observationTypes = await typeRepository.find();
-      this.observations = await observationRepository.find();
+      this.observations = await observationRepository.find({ relations: ['imgData', 'mapLocation', 'type'] });
     })
   }
 
