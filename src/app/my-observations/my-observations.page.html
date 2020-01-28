@@ -11,8 +11,9 @@
     </ion-button>
 
     <div [hidden]="!searchCriteriaOpen" class="search-sort-criteria">
+      <ion-item *ngIf="searchObservationType">
+        <app-observation-type-entry *ngIf="searchObservationType" [observationType]="searchObservationType"></app-observation-type-entry></ion-item>
       <ion-item>
-        <app-observation-type-entry *ngIf="searchObservationType" [observationType]="searchObservationType"></app-observation-type-entry>
         <ion-button (click)="openTypeModal()">{{ 'NEWOBS.SELECTTYPE' | translate }}</ion-button>
       </ion-item>
 

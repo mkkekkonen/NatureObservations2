@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 
 import { Repository } from 'typeorm';
 
 import { Observation, ObservationType } from '../models';
 import { DbService } from '../db.service';
+import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
 
 @Component({
   selector: 'app-my-observations',
@@ -33,7 +35,10 @@ export class MyObservationsPage implements OnInit {
 
   newObservationUrl = ['/edit-observation'];
 
-  constructor(private dbService: DbService) {}
+  constructor(
+    private dbService: DbService,
+    private modalController: ModalController,
+  ) {}
 
   ngOnInit() {
   }
@@ -64,9 +69,15 @@ export class MyObservationsPage implements OnInit {
     this.sortCriteriaOpen = !this.sortCriteriaOpen;
   }
 
-  openTypeModal() {
-    window.alert('Opening modal');
-    // TODO: type modal
+  async openTypeModal() {
+    const modal = await this.modalController.create({
+      component: ObservationTypeModalPage,
+    });
+    modal.onDidDismiss().then(event => {
+      const { observationType } = event.data;
+      this.searchObservationType = observationType;
+    });
+    await modal.present();
   }
 
   search() {
