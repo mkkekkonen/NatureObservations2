@@ -36,13 +36,16 @@ export class MyObservationsPage implements OnInit {
   constructor(private dbService: DbService) {}
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
     this.dbService.getConnection().then(async connection => {
       const typeRepository = connection.getRepository('observationtype') as Repository<ObservationType>;
       const observationRepository = connection.getRepository('observation') as Repository<Observation>;
 
       this.observationTypes = await typeRepository.find();
-      this.observations = await observationRepository.find({ relations: ['imgData', 'mapLocation', 'type'] });
-    })
+      this.observations = (await observationRepository.find({ relations: ['imgData', 'mapLocation', 'type'] })).reverse();
+    });
   }
 
   get searchIcon() {

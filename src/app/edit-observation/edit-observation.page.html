@@ -20,12 +20,12 @@
 
     <ion-item>
       <ion-label position="stacked">{{ 'NEWOBS.TITLE' | translate }}</ion-label>
-      <ion-input [(ngModel)]="observation.title"></ion-input>
+      <ion-input [(ngModel)]="observation.title" autocapitalize="on"></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label position="stacked">{{ 'NEWOBS.DESCR' | translate }}</ion-label>
-      <ion-textarea [(ngModel)]="observation.description"></ion-textarea>
+      <ion-textarea [(ngModel)]="observation.description" autocapitalize="on"></ion-textarea>
     </ion-item>
 
     <ion-item>
