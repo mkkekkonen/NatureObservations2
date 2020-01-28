@@ -51,7 +51,7 @@ export class EditObservationPage implements OnInit {
   ) {
     const commonCameraOptions: CameraOptions = {
       quality: 100,
-      destinationType: !debugService ? this.camera.DestinationType.FILE_URI : this.camera.DestinationType.DATA_URL,
+      destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.PNG,
       mediaType: this.camera.MediaType.PICTURE,
     };
@@ -79,9 +79,9 @@ export class EditObservationPage implements OnInit {
 
   get imageUrl() {
     if (this.observation.imgData) {
-      if (this.debugService.debugMode && this.observation.imgData.debugDataUri) {
-        return this.observation.imgData.debugDataUri;
-      } else if (!this.debugService.debugMode && this.observation.imgData.fileUri) {
+      if (this.debugService.debugMode) {
+        return (window as any).Ionic.WebView.convertFileSrc(this.observation.imgData.fileUri);
+      } else {
         return this.observation.imgData.fileUri;
       }
     }
@@ -96,12 +96,8 @@ export class EditObservationPage implements OnInit {
 
     try {
       this.observation.imgData = new ImgData();
-      if (!this.debugService.debugMode) {
-        const path = await this.filePath.resolveNativePath(imageUrl);
-        this.observation.imgData.fileUri = path;
-      } else {
-        this.observation.imgData.debugDataUri = `data:image/png;base64,${imageUrl}`;
-      }
+      const path = await this.filePath.resolveNativePath(`file://${imageUrl}`);
+      this.observation.imgData.fileUri = path;
       this.observation.imgData.observation = this.observation;
     } catch(e) {
       window.alert(e.message);

@@ -3,6 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import * as moment from 'moment';
 
 import { Observation } from '../models';
+import { DebugService } from '../debug.service';
 
 @Component({
   selector: 'app-observation-card',
@@ -12,7 +13,7 @@ import { Observation } from '../models';
 export class ObservationCardComponent implements OnInit {
   @Input('observation') observation: Observation;
 
-  constructor() { }
+  constructor(private debugService: DebugService) { }
 
   ngOnInit() {}
 
@@ -22,7 +23,11 @@ export class ObservationCardComponent implements OnInit {
 
   get imgUrl() {
     if (this.observation.imgData) {
-      return this.observation.imgData.fileUri || this.observation.imgData.debugDataUri;
+      if (this.debugService.debugMode) {
+        return (window as any).Ionic.WebView.convertFileSrc(this.observation.imgData.fileUri);
+      } else {
+        return this.observation.imgData.fileUri;
+      }
     }
   }
 }
