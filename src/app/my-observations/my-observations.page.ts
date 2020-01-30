@@ -5,6 +5,16 @@ import { Repository } from 'typeorm';
 
 import { Observation, ObservationType } from '../models';
 import { DbService } from '../db.service';
+import {
+  SearchSortService,
+  SortBy,
+  Order,
+  TITLE,
+  TYPE,
+  DATE,
+  ASC,
+  DESC,
+} from '../search-sort.service';
 import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
 
 @Component({
@@ -20,15 +30,15 @@ export class MyObservationsPage implements OnInit {
   searchStartDateString: string = null;
   searchEndDateString: string = null;
 
-  SORT_BY_TITLE = 'title';
-  SORT_BY_TYPE = 'type';
-  SORT_BY_DATE = 'date';
+  SORT_BY_TITLE = TITLE;
+  SORT_BY_TYPE = TYPE;
+  SORT_BY_DATE = DATE;
 
-  SORT_ASCENDING = 'ascending';
-  SORT_DESCENDING = 'descending';
+  SORT_ASCENDING = ASC;
+  SORT_DESCENDING = DESC;
 
-  sortBy = this.SORT_BY_DATE;
-  sortOrder = this.SORT_DESCENDING;
+  sortBy: SortBy = DATE;
+  sortOrder: Order = DESC;
 
   observationTypes: ObservationType[] = null;
   observations: Observation[] = null;
@@ -36,8 +46,9 @@ export class MyObservationsPage implements OnInit {
   newObservationUrl = ['/edit-observation'];
 
   constructor(
-    private dbService: DbService,
     private modalController: ModalController,
+    private dbService: DbService,
+    private searchSortService: SearchSortService,
   ) {}
 
   ngOnInit() {
@@ -59,6 +70,15 @@ export class MyObservationsPage implements OnInit {
 
   get sortIcon() {
     return this.sortCriteriaOpen ? 'arrow-up' : 'arrow-down';
+  }
+
+  get sortedObservations() {
+    if (!this.observations) {
+      return [];
+    }
+    const observations = [...this.observations];
+    this.searchSortService.sortObservations(observations, this.sortBy, this.sortOrder);
+    return observations;
   }
 
   toggleSearchCriteria() {

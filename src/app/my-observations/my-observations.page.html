@@ -81,7 +81,7 @@
   <p *ngIf="observations && observations.length === 0">{{ 'MYOBS.NOOBS' | translate }}</p>
 
   <ion-list lines="none">
-    <ion-item *ngFor="let observation of observations">
+    <ion-item *ngFor="let observation of sortedObservations">
       <app-observation-card [observation]="observation"></app-observation-card>
     </ion-item>
   </ion-list>
