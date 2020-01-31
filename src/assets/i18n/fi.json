@@ -73,7 +73,9 @@
     "SELECTTYPE": "Valitse tyyppi!",
     "AREUSURE": "Oletko varma?",
     "TITLE": "Otsikko",
-    "TYPE": "Tyyppi"
+    "TYPE": "Tyyppi",
+    "NOTYPE": "Ei tyyppiä",
+    "SEARCHWORD": "Sanahaku"
   },
   "OBSTYPE": {
     "LANDSCAPE": "Maisema",

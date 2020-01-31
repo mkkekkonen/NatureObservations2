@@ -26,6 +26,7 @@ export class MyObservationsPage implements OnInit {
   searchCriteriaOpen: boolean = false;
   sortCriteriaOpen: boolean = false;
 
+  searchString: string = null;
   searchObservationType: ObservationType = null;
   searchStartDateString: string = null;
   searchEndDateString: string = null;
@@ -41,6 +42,7 @@ export class MyObservationsPage implements OnInit {
   sortOrder: Order = DESC;
 
   observationTypes: ObservationType[] = null;
+  allObservations: Observation[] = null;
   observations: Observation[] = null;
 
   newObservationUrl = ['/edit-observation'];
@@ -60,7 +62,9 @@ export class MyObservationsPage implements OnInit {
       const observationRepository = connection.getRepository('observation') as Repository<Observation>;
 
       this.observationTypes = await typeRepository.find();
-      this.observations = (await observationRepository.find({ relations: ['imgData', 'mapLocation', 'type'] })).reverse();
+      const observations = (await observationRepository.find({ relations: ['imgData', 'mapLocation', 'type'] })).reverse();
+      this.allObservations = observations;
+      this.observations = observations;
     });
   }
 
@@ -94,23 +98,31 @@ export class MyObservationsPage implements OnInit {
       component: ObservationTypeModalPage,
     });
     modal.onDidDismiss().then(event => {
-      const { observationType } = event.data;
-      this.searchObservationType = observationType;
+      if (event.data) {
+        const { observationType } = event.data;
+        this.searchObservationType = observationType;
+      }
     });
     await modal.present();
   }
 
   search() {
-    window.alert('Searching');
-    // TODO: search
+    this.observations = this.searchSortService.searchObservations(
+      this.allObservations,
+      this.searchString,
+      this.searchObservationType && this.searchObservationType.name,
+      this.searchStartDateString,
+      this.searchEndDateString,
+    );
+    this.searchCriteriaOpen = false;
   }
 
   showAll() {
-    window.alert('Showing all');
-    // TODO: show all
+    this.observations = this.allObservations;
   }
 
   resetForm() {
+    this.searchString = null;
     this.searchObservationType = null;
     this.searchStartDateString = null;
     this.searchEndDateString = null;

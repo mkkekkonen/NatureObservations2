@@ -16,6 +16,7 @@ export const ASC = 'ascending';
 export const DESC = 'descending';
 
 const dbDateFormat = 'YYYY-MM-DD HH:mm';
+const componentDateFormat = 'YYYY-MM-DDTHH:mm:ss';
 
 const getPropertyKey = (sortBy: SortBy) => {
   switch (sortBy) {
@@ -34,6 +35,40 @@ const getPropertyKey = (sortBy: SortBy) => {
 })
 export class SearchSortService {
   constructor() { }
+
+  searchObservations = (observations: Observation[], searchString?: string, observationTypeName?: string, startDateString?: string, endDateString?: string) => {
+    let filteredObservations = [...observations];
+
+    if (searchString) {
+      const searchStringLowercase = searchString.toLocaleLowerCase();
+      filteredObservations = filteredObservations.filter(observation => (
+        observation.title.toLocaleLowerCase().includes(searchStringLowercase)
+          || (observation.description && observation.description.toLocaleLowerCase().includes(searchStringLowercase))
+      ));
+    }
+
+    if (observationTypeName) {
+      filteredObservations = filteredObservations.filter(observation => observation.type.name === observationTypeName);
+    }
+
+    if (startDateString) {
+      const startDate = moment.default(startDateString, componentDateFormat);
+      filteredObservations = filteredObservations.filter(observation => {
+        const observationDate = moment.default(observation.date, dbDateFormat);
+        return observationDate.isSameOrAfter(startDate);
+      });
+    }
+
+    if (endDateString) {
+      const endDate = moment.default(endDateString, componentDateFormat);
+      filteredObservations = filteredObservations.filter(observation => {
+        const observationDate = moment.default(observation.date, dbDateFormat);
+        return observationDate.isSameOrBefore(endDate);
+      });
+    }
+
+    return filteredObservations;
+  }
 
   sortObservations = (observations: Observation[], sortBy: SortBy, order: Order = ASC) => {
     const propertyKey = getPropertyKey(sortBy);

@@ -73,7 +73,9 @@
     "SELECTTYPE": "Please select a type!",
     "AREUSURE": "Are you sure?",
     "TITLE": "Otsikko",
-    "TYPE": "Tyyppi"
+    "TYPE": "Tyyppi",
+    "NOTYPE": "Clear type",
+    "SEARCHWORD": "Search"
   },
   "OBSTYPE": {
     "LANDSCAPE": "Landscape",
