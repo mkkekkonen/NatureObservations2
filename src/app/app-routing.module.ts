@@ -3,6 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 import { MyObservationsPage } from './my-observations/my-observations.page';
 import { EditObservationPage } from './edit-observation/edit-observation.page';
+import { ViewObservationPage } from './view-observation/view-observation.page';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: 'edit-observation',
     component: EditObservationPage,
+  },
+  {
+    path: 'view-observation/:id',
+    component: ViewObservationPage,
   },
 ];
 
