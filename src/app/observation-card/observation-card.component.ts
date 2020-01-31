@@ -12,6 +12,7 @@ import { DebugService } from '../debug.service';
 })
 export class ObservationCardComponent implements OnInit {
   @Input('observation') observation: Observation;
+  @Input('deleteObservation') deleteObservationCallback: (observation: Observation) => void;
 
   constructor(private debugService: DebugService) { }
 
@@ -28,6 +29,12 @@ export class ObservationCardComponent implements OnInit {
       } else {
         return this.observation.imgData.fileUri;
       }
+    }
+  }
+
+  deleteObservation() {
+    if (this.observation && this.deleteObservationCallback) {
+      this.deleteObservationCallback(this.observation);
     }
   }
 }

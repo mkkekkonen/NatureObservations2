@@ -11,7 +11,7 @@
     <p *ngIf="observation.mapLocation && observation.mapLocation.name">{{ observation.mapLocation.name }}</p>
     <app-observation-type-entry *ngIf="observation.type" [observationType]="observation.type"></app-observation-type-entry>
 
-    <ion-button size="small" color="danger" class="delete-button">
+    <ion-button size="small" color="danger" class="delete-button" (click)="deleteObservation()">
       <ion-icon name="trash"></ion-icon>
     </ion-button>
   </ion-card-content>

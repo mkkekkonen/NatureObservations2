@@ -94,7 +94,7 @@
 
   <ion-list lines="none">
     <ion-item *ngFor="let observation of sortedObservations">
-      <app-observation-card [observation]="observation"></app-observation-card>
+      <app-observation-card [observation]="observation" [deleteObservation]="deleteObservation"></app-observation-card>
     </ion-item>
   </ion-list>
 

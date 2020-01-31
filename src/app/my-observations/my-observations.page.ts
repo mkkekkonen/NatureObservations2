@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
 import { Repository } from 'typeorm';
+import { TranslateService } from '@ngx-translate/core';
 
-import { Observation, ObservationType } from '../models';
+import { Observation, ObservationType, ImgData, MapLocation } from '../models';
 import { DbService } from '../db.service';
 import {
   SearchSortService,
@@ -49,9 +50,12 @@ export class MyObservationsPage implements OnInit {
 
   constructor(
     private modalController: ModalController,
+    private translateService: TranslateService,
     private dbService: DbService,
     private searchSortService: SearchSortService,
-  ) {}
+  ) {
+    this.deleteObservation = this.deleteObservation.bind(this);
+  }
 
   ngOnInit() {
   }
@@ -126,5 +130,34 @@ export class MyObservationsPage implements OnInit {
     this.searchObservationType = null;
     this.searchStartDateString = null;
     this.searchEndDateString = null;
+  }
+
+  async deleteObservation(observation: Observation) {
+    if (!window.confirm(this.translateService.instant('MYOBS.AREUSURE'))) {
+      return;
+    }
+
+    const indexInObservations = this.observations.findIndex(listObservation => listObservation.id === observation.id);
+    const indexInAllObservations = this.allObservations.findIndex(listObservation => listObservation.id === observation.id);
+
+    const connection = await this.dbService.getConnection();
+    
+    try {
+      connection.transaction(async entityManager => {
+        await entityManager.delete(ImgData, { observation });
+        await entityManager.delete(MapLocation, { observation });
+        await entityManager.remove(observation);
+      });
+    } catch(e) {
+      window.alert(`Virhe: ${e.message}`);
+      return;
+    }
+
+    if (indexInObservations > -1) {
+      this.observations.splice(indexInObservations);
+    }
+    if (indexInAllObservations > -1) {
+      this.allObservations.splice(indexInAllObservations);
+    }
   }
 }
