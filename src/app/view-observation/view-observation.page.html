@@ -1,9 +1,7 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>view-observation</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-nobs-header [text]="'VIEWOBS.OBS' | translate"></app-nobs-header>
 
 <ion-content>
-
+  <div class="flex">
+  <span *ngIf="observation">{{observation.title}} - {{observation.description}}</span>
+  </div>
 </ion-content>

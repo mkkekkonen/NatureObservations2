@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 import * as moment from 'moment';
 
@@ -14,7 +15,10 @@ export class ObservationCardComponent implements OnInit {
   @Input('observation') observation: Observation;
   @Input('deleteObservation') deleteObservationCallback: (observation: Observation) => void;
 
-  constructor(private debugService: DebugService) { }
+  constructor(
+    private router: Router,
+    private debugService: DebugService,
+  ) { }
 
   ngOnInit() {}
 
@@ -32,9 +36,15 @@ export class ObservationCardComponent implements OnInit {
     }
   }
 
-  deleteObservation() {
+  deleteObservation(event: Event) {
+    event.stopPropagation();
+
     if (this.observation && this.deleteObservationCallback) {
       this.deleteObservationCallback(this.observation);
     }
+  }
+
+  navigate() {
+    this.router.navigate(['/view-observation', this.observation.id]);
   }
 }
