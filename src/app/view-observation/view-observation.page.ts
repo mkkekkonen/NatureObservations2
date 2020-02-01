@@ -4,9 +4,13 @@ import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { Repository } from 'typeorm';
+import * as moment from 'moment';
 
 import { DbService } from '../db.service';
+import { DebugService } from '../debug.service';
 import { Observation } from '../models';
+
+const dbDateFormat = 'YYYY-MM-DD HH:mm';
 
 @Component({
   selector: 'app-view-observation',
@@ -20,6 +24,7 @@ export class ViewObservationPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private dbService: DbService,
+    private debugService: DebugService,
   ) { }
 
   ngOnInit() {
@@ -30,7 +35,7 @@ export class ViewObservationPage implements OnInit {
         const connection = await this.dbService.getConnection();
         const observationRepository = connection.getRepository('observation') as Repository<Observation>;
         try {
-          const observations = await observationRepository.find({ id: observationId });
+          const observations = await observationRepository.find({ where: { id: observationId }, relations: ['imgData', 'mapLocation', 'type'] });
           if (observations.length > 0) {
             const [first] = observations;
             return first;
@@ -44,5 +49,21 @@ export class ViewObservationPage implements OnInit {
     this.observation$.subscribe({
       next: (observation) => { this.observation = observation; }
     });
+  }
+
+  get imgUrl() {
+    if (this.observation && this.observation.imgData) {
+      if (this.debugService.debugMode) {
+        return (window as any).Ionic.WebView.convertFileSrc(this.observation.imgData.fileUri);
+      } else {
+        return this.observation.imgData.fileUri;
+      }
+    }
+  }
+
+  get formattedDate() {
+    if (this.observation && this.observation.date) {
+      return moment.default(this.observation.date, dbDateFormat).format('D.M.YYYY HH:mm');
+    }
   }
 }
