@@ -37,5 +37,15 @@
     <ion-item *ngIf="observation.date">
       <ion-label>{{ formattedDate }}</ion-label>
     </ion-item>
+
+    <ion-list-header *ngIf="observation.mapLocation">{{ 'VIEWOBS.LOCATION' | translate }}</ion-list-header>
+
+    <ion-item *ngIf="observation.mapLocation?.name">
+      <ion-label>{{ observation.mapLocation.name }}</ion-label>
+    </ion-item>
+
+    <div ion-item>
+      <div item-content #map id="map"></div>
+    </div>
   </ion-list>
 </ion-content>
