@@ -7,35 +7,45 @@
 
   <ion-button expand="full">{{ 'VIEWOBS.EDIT' | translate }}</ion-button>
 
-  <ion-list *ngIf="observation">
+  <ion-list>
     <ion-list-header>
       <ion-label>{{ 'VIEWOBS.DESCR' | translate }}</ion-label>
     </ion-list-header>
 
-    <ion-item>
+    <ion-item *ngIf="observation">
       <ion-label>
         <b>{{ observation.title }}</b>
       </ion-label>
     </ion-item>
 
-    <ion-item *ngIf="observation.description">
+    <ion-item *ngIf="observation">
       <ion-label>{{ observation.description }}</ion-label>
     </ion-item>
 
-    <ion-list-header *ngIf="observation.type">
+    <ion-list-header *ngIf="observation?.type">
       <ion-label>{{ 'VIEWOBS.TYPE' | translate }}</ion-label>
     </ion-list-header>
 
-    <ion-item *ngIf="observation.type">
+    <ion-item *ngIf="observation?.type">
       <app-observation-type-entry [observationType]="observation.type"></app-observation-type-entry>
     </ion-item>
 
-    <ion-list-header *ngIf="observation.date">
+    <ion-list-header *ngIf="observation?.date">
       <ion-label>{{ 'VIEWOBS.DATE' | translate }}</ion-label>
     </ion-list-header>
 
-    <ion-item *ngIf="observation.date">
+    <ion-item *ngIf="observation?.date">
       <ion-label>{{ formattedDate }}</ion-label>
     </ion-item>
+
+    <ion-list-header>{{ 'VIEWOBS.LOCATION' | translate }}</ion-list-header>
+
+    <div ion-item>
+      <div item-content #viewMap id="viewMap">
+        <div *ngIf="!observation?.mapLocation" class="map-placeholder">
+          <ion-icon name="pin"></ion-icon>
+        </div>
+      </div>
+    </div>
   </ion-list>
 </ion-content>
