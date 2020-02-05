@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Platform, ModalController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
@@ -27,6 +29,7 @@ const componentDateFormat = 'YYYY-MM-DDTHH:mm:ss';
   styleUrls: ['./edit-observation.page.scss'],
 })
 export class EditObservationPage implements OnInit {
+  observation$: Observable<Observation>;
   observation = new Observation();
   time = moment.default().format(componentDateFormat);
 
@@ -40,6 +43,7 @@ export class EditObservationPage implements OnInit {
 
   constructor(
     private platform: Platform,
+    private route: ActivatedRoute,
     private camera: Camera,
     private filePath: FilePath,
     private modalController: ModalController,
@@ -68,8 +72,32 @@ export class EditObservationPage implements OnInit {
   }
 
   ngOnInit() {
-    this.platform.ready().then(() => {
-      this.initLeafletMap();
+    this.observation$ = this.route.paramMap.pipe(
+      switchMap(async params => {
+        const observationId = +params.get('id');
+
+        const connection = await this.dbService.getConnection();
+        const observationRepository = connection.getRepository('observation') as Repository<Observation>;
+        try {
+          const observations = await observationRepository.find({ where: { id: observationId }, relations: ['imgData', 'mapLocation', 'type'] });
+          if (observations.length > 0) {
+            const [first] = observations;
+            return first;
+          }
+        } catch(e) {
+          window.alert(`Error fetching observation: ${e.message}`);
+        }
+      })
+    );
+
+    this.observation$.subscribe({
+      next: (observation) => {
+        this.observation = observation;
+
+        this.platform.ready().then(() => {
+          this.initLeafletMap();
+        });
+      },
     });
   }
 
@@ -167,6 +195,11 @@ export class EditObservationPage implements OnInit {
   }
 
   async save() {
+    if (!this.observation.title) {
+      window.alert(this.translateService.instant('NEWOBS.ADDTITLE'));
+      return;
+    }
+
     if (!this.observation.type) {
       window.alert(this.translateService.instant('NEWOBS.SELECTTYPEEXCL'));
       return;

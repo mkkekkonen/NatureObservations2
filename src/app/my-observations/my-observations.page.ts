@@ -61,15 +61,17 @@ export class MyObservationsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.dbService.getConnection().then(async connection => {
-      const typeRepository = connection.getRepository('observationtype') as Repository<ObservationType>;
-      const observationRepository = connection.getRepository('observation') as Repository<Observation>;
+    window.setTimeout(() => {
+      this.dbService.getConnection().then(async connection => {
+        const typeRepository = connection.getRepository('observationtype') as Repository<ObservationType>;
+        const observationRepository = connection.getRepository('observation') as Repository<Observation>;
 
-      this.observationTypes = await typeRepository.find();
-      const observations = (await observationRepository.find({ relations: ['imgData', 'mapLocation', 'type'] })).reverse();
-      this.allObservations = observations;
-      this.observations = observations;
-    });
+        this.observationTypes = await typeRepository.find();
+        const observations = (await observationRepository.find({ relations: ['imgData', 'mapLocation', 'type'] })).reverse();
+        this.allObservations = observations;
+        this.observations = observations;
+      });
+    }, 500);
   }
 
   get searchIcon() {

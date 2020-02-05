@@ -5,7 +5,7 @@
    <img *ngIf="imgUrl" [src]="imgUrl" />
   </div>
 
-  <ion-button expand="full">{{ 'VIEWOBS.EDIT' | translate }}</ion-button>
+  <ion-button expand="full" [disabled]="!editRoute" [routerLink]="editRoute">{{ 'VIEWOBS.EDIT' | translate }}</ion-button>
 
   <ion-list>
     <ion-list-header>

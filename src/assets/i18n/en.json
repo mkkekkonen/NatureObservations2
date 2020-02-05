@@ -34,7 +34,8 @@
     "TITLE": "Title",
     "DATE": "Date",
     "SELECTTYPEEXCL": "Pick a type for the observation!",
-    "SELECTDATE": "Pick a date!"
+    "SELECTDATE": "Pick a date!",
+    "ADDTITLE": "Add a title!"
   },
   "VIEWOBS": {
     "OBS": "Observation",

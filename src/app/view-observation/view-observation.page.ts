@@ -54,9 +54,7 @@ export class ViewObservationPage implements OnInit, AfterViewInit {
         }
       })
     );
-  }
 
-  ngAfterViewInit() {
     this.observation$.subscribe({
       next: (observation) => {
         this.observation = observation;
@@ -68,6 +66,9 @@ export class ViewObservationPage implements OnInit, AfterViewInit {
         }
       },
     });
+  }
+
+  ngAfterViewInit() {
   }
 
   get imgUrl() {
@@ -84,6 +85,14 @@ export class ViewObservationPage implements OnInit, AfterViewInit {
     if (this.observation && this.observation.date) {
       return moment.default(this.observation.date, dbDateFormat).format('D.M.YYYY HH:mm');
     }
+  }
+
+  get editRoute() {
+    if (this.observation) {
+      return ['/edit-observation', this.observation.id];
+    }
+
+    return undefined;
   }
 
   createLeafletMap() {

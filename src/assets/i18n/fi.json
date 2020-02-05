@@ -34,7 +34,8 @@
     "TITLE": "Otsikko",
     "DATE": "Päivämäärä",
     "SELECTTYPEEXCL": "Valitse havainnon tyyppi!",
-    "SELECTDATE": "Valitse päivämäärä!"
+    "SELECTDATE": "Valitse päivämäärä!",
+    "ADDTITLE": "Aseta otsikko!"
   },
   "VIEWOBS": {
     "OBS": "Havainto",

@@ -16,6 +16,10 @@ const routes: Routes = [
     component: EditObservationPage,
   },
   {
+    path: 'edit-observation/:id',
+    component: EditObservationPage,
+  },
+  {
     path: 'view-observation/:id',
     component: ViewObservationPage,
   },
