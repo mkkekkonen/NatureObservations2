@@ -2,15 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Platform } from '@ionic/angular';
 
 import { Repository } from 'typeorm';
 import * as moment from 'moment';
-import * as L from 'leaflet';
 
 import { DbService } from '../db.service';
 import { DebugService } from '../debug.service';
-import { MapService } from '../map.service';
 import { Observation } from '../models';
 
 const dbDateFormat = 'YYYY-MM-DD HH:mm';
@@ -24,19 +21,11 @@ export class ViewObservationPage implements OnInit {
   observation$: Observable<Observation>;
   observation: Observation;
 
-  map: L.Map;
-  marker: L.Marker;
-
   constructor(
     private route: ActivatedRoute,
-    private platform: Platform,
     private dbService: DbService,
     private debugService: DebugService,
-    private mapService: MapService,
-  ) {
-    this.setMap = this.setMap.bind(this);
-    this.setMarker = this.setMarker.bind(this);
-  }
+  ) { }
 
   ngOnInit() {
     this.observation$ = this.route.paramMap.pipe(
@@ -60,15 +49,6 @@ export class ViewObservationPage implements OnInit {
     this.observation$.subscribe({
       next: (observation) => { this.observation = observation; }
     });
-
-    this.platform.ready().then(async () => {
-      await this.mapService.initLeafletMap(this.setMap);
-      if (this.observation.mapLocation) {
-        const { latitude, longitude } = this.observation.mapLocation;
-        const latLng = new L.LatLng(latitude, longitude);
-        this.mapService.setLeafletMarkerAndPan(latLng, this.map, this.marker, this.setMarker);
-      }
-    });
   }
 
   get imgUrl() {
@@ -85,13 +65,5 @@ export class ViewObservationPage implements OnInit {
     if (this.observation && this.observation.date) {
       return moment.default(this.observation.date, dbDateFormat).format('D.M.YYYY HH:mm');
     }
-  }
-
-  setMap(map: L.Map) {
-    this.map = map;
-  }
-
-  setMarker(marker: L.Marker) {
-    this.marker = marker;
   }
 }

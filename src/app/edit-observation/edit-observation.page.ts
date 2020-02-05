@@ -17,7 +17,6 @@ import { ObservationTypeModalPage } from '../observation-type-modal/observation-
 import { MapModalPage } from '../map-modal/map-modal.page';
 import { DebugService } from '../debug.service';
 import { DbService } from '../db.service';
-import { MapService } from '../map.service';
 import { thunderforestApiKey } from '../secrets.json';
 
 const componentDateFormat = 'YYYY-MM-DDTHH:mm:ss';
@@ -49,11 +48,7 @@ export class EditObservationPage implements OnInit {
     private router: Router,
     private debugService: DebugService,
     private dbService: DbService,
-    private mapService: MapService,
   ) {
-    this.setMap = this.setMap.bind(this);
-    this.setMarker = this.setMarker.bind(this);
-
     const commonCameraOptions: CameraOptions = {
       quality: 100,
       destinationType: this.camera.DestinationType.FILE_URI,
@@ -74,7 +69,7 @@ export class EditObservationPage implements OnInit {
 
   ngOnInit() {
     this.platform.ready().then(() => {
-      this.mapService.initLeafletMap(this.setMap);
+      this.initLeafletMap();
     });
   }
 
@@ -92,14 +87,6 @@ export class EditObservationPage implements OnInit {
     }
 
     return undefined;
-  }
-
-  setMap(map: L.Map) {
-    this.map = map;
-  }
-
-  setMarker(marker: L.Marker) {
-    this.marker = marker;
   }
 
   async takePicture(usePhotoLibrary?: 'photoLibrary') {
@@ -128,6 +115,33 @@ export class EditObservationPage implements OnInit {
     await modal.present();
   }
 
+  async initLeafletMap() {
+    if (!this.debugService.debugMode) {
+      const currentPosition = await this.geolocation.getCurrentPosition();
+      const latLng = L.latLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
+      this.createLeafletMap(latLng);
+    } else {
+      const latLng =  L.latLng(61.497, 23.760);
+      this.createLeafletMap(latLng);
+    }
+  }
+
+  createLeafletMap(latLng: L.LatLng) {
+    this.map = L.map(
+      'map',
+      {
+        zoomControl: false,
+        touchZoom: false,
+        doubleClickZoom: false,
+        dragging: false,
+      }
+    ).setView(latLng, 15);
+    L.tileLayer.provider('Thunderforest.Outdoors', { apikey: thunderforestApiKey }).addTo(this.map);
+    setTimeout(() => {
+      this.map.invalidateSize();
+    }, 1000);
+  }
+
   async openMapModal() {
     const modal = await this.modalController.create({
       component: MapModalPage,
@@ -137,10 +151,19 @@ export class EditObservationPage implements OnInit {
         this.observation.mapLocation = event.data.mapLocation;
         this.observation.mapLocation.observation = this.observation;
         const { latitude, longitude } = this.observation.mapLocation;
-        this.mapService.setLeafletMarkerAndPan(new L.LatLng(latitude, longitude), this.map, this.marker, this.setMarker);
+        this.setLeafletMarkerAndPan(new L.LatLng(latitude, longitude));
       }
     });
     await modal.present();
+  }
+
+  setLeafletMarkerAndPan(latLng: L.LatLng) {
+    if (!this.marker) {
+      this.marker = L.marker(latLng).addTo(this.map);
+    } else {
+      this.marker.setLatLng(latLng);
+    }
+    this.map.panTo(latLng);
   }
 
   async save() {
