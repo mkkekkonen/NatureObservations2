@@ -16,7 +16,7 @@ export class MapLocation {
   @Column('real')
   longitude: number;
 
-  @OneToOne(t => Observation, observation => observation.mapLocation)
+  @OneToOne(t => Observation, observation => observation.mapLocation, { onDelete: 'CASCADE' })
   @JoinColumn()
   observation: Observation;
 }

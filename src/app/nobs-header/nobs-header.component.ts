@@ -8,6 +8,8 @@ import { MenuController } from '@ionic/angular';
 })
 export class NobsHeaderComponent implements OnInit {
   @Input('text') text: string;
+  @Input('rightSideButtonIcon') rightSideButtonIcon?: string;
+  @Input('rightSideButtonFunc') rightSideButtonFunc?: () => void;
 
   constructor(private menu: MenuController) { }
 

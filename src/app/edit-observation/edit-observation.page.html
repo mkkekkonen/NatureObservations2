@@ -39,7 +39,10 @@
 
     <ion-item>
       <app-observation-type-entry *ngIf="observation.type" [observationType]="observation.type"></app-observation-type-entry>
-      <ion-button slot="start" (click)="openTypeModal()">{{ 'NEWOBS.SELECTTYPE' | translate }}</ion-button>
+    </ion-item>
+
+    <ion-item>
+      <ion-button (click)="openTypeModal()">{{ 'NEWOBS.SELECTTYPE' | translate }}</ion-button>
     </ion-item>
 
     <ion-list-header>{{ 'NEWOBS.LOCATION' | translate }}</ion-list-header>

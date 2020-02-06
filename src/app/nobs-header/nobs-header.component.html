@@ -5,8 +5,15 @@
         <ion-icon name="menu"></ion-icon>
       </ion-button>
     </ion-buttons>
+
     <ion-title>
       {{ text | translate }}
     </ion-title>
+
+    <ion-buttons slot="end" *ngIf="rightSideButtonIcon">
+      <ion-button (click)="rightSideButtonFunc()">
+        <ion-icon [name]="rightSideButtonIcon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>

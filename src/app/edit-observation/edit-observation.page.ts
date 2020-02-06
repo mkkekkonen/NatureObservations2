@@ -76,6 +76,10 @@ export class EditObservationPage implements OnInit {
       switchMap(async params => {
         const observationId = +params.get('id');
 
+        if (!observationId) {
+          return undefined;
+        }
+
         const connection = await this.dbService.getConnection();
         const observationRepository = connection.getRepository('observation') as Repository<Observation>;
         try {
@@ -92,7 +96,9 @@ export class EditObservationPage implements OnInit {
 
     this.observation$.subscribe({
       next: (observation) => {
-        this.observation = observation;
+        if (observation) {
+          this.observation = observation;
+        }
 
         this.platform.ready().then(() => {
           this.initLeafletMap();
@@ -107,11 +113,7 @@ export class EditObservationPage implements OnInit {
 
   get imageUrl() {
     if (this.observation.imgData) {
-      if (this.debugService.debugMode) {
-        return (window as any).Ionic.WebView.convertFileSrc(this.observation.imgData.fileUri);
-      } else {
-        return this.observation.imgData.fileUri;
-      }
+      return (window as any).Ionic.WebView.convertFileSrc(this.observation.imgData.fileUri);
     }
 
     return undefined;
@@ -136,10 +138,16 @@ export class EditObservationPage implements OnInit {
     const modal = await this.modalController.create({
       component: ObservationTypeModalPage,
     });
+
     modal.onDidDismiss().then(event => {
-      const { observationType } = event.data;
-      this.observation.type = observationType;
+      if (event.data) {
+        const { observationType } = event.data;
+        if (observationType) {
+          this.observation.type = observationType;
+        }
+      }
     });
+
     await modal.present();
   }
 

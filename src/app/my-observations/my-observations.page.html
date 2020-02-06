@@ -23,7 +23,7 @@
         <ion-button (click)="openTypeModal()">{{ 'MYOBS.SELECTTYPE' | translate }}</ion-button>
       </ion-item>
       <ion-item>
-        <ion-button color="danger">
+        <ion-button color="danger" (click)="clearType()">
           <ion-icon name="close" slot="start"></ion-icon>
           {{ 'MYOBS.NOTYPE' | translate }}
         </ion-button>
@@ -101,6 +101,12 @@
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button [routerLink]="newObservationUrl">
       <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+    <ion-fab-button color="success" (click)="loadObservations()">
+      <img src="assets/icons/refresh.png" width="30" />
     </ion-fab-button>
   </ion-fab>
 </ion-content>

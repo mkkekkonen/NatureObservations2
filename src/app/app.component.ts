@@ -34,6 +34,7 @@ export class AppComponent {
 
     this.pages = [
       { text: 'APP.HOME', url: ['/home'] },
+      { text: 'APP.NEWOBS', url: ['/edit-observation'] },
     ];
   }
 

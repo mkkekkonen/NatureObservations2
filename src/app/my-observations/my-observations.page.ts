@@ -55,23 +55,14 @@ export class MyObservationsPage implements OnInit {
     private searchSortService: SearchSortService,
   ) {
     this.deleteObservation = this.deleteObservation.bind(this);
+    this.loadObservations = this.loadObservations.bind(this);
   }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
-    window.setTimeout(() => {
-      this.dbService.getConnection().then(async connection => {
-        const typeRepository = connection.getRepository('observationtype') as Repository<ObservationType>;
-        const observationRepository = connection.getRepository('observation') as Repository<Observation>;
-
-        this.observationTypes = await typeRepository.find();
-        const observations = (await observationRepository.find({ relations: ['imgData', 'mapLocation', 'type'] })).reverse();
-        this.allObservations = observations;
-        this.observations = observations;
-      });
-    }, 500);
+    this.loadObservations();
   }
 
   get searchIcon() {
@@ -89,6 +80,19 @@ export class MyObservationsPage implements OnInit {
     const observations = [...this.observations];
     this.searchSortService.sortObservations(observations, this.sortBy, this.sortOrder);
     return observations;
+  }
+
+  loadObservations() {
+    window.setTimeout(async () => {
+      const connection = await this.dbService.getConnection();
+      const typeRepository = connection.getRepository('observationtype') as Repository<ObservationType>;
+      const observationRepository = connection.getRepository('observation') as Repository<Observation>;
+
+      this.observationTypes = await typeRepository.find();
+      const observations = (await observationRepository.find({ relations: ['imgData', 'mapLocation', 'type'] })).reverse();
+      this.allObservations = [...observations];
+      this.observations = [...observations];
+    }, 500);
   }
 
   toggleSearchCriteria() {
@@ -112,6 +116,10 @@ export class MyObservationsPage implements OnInit {
     await modal.present();
   }
 
+  clearType() {
+    this.searchObservationType = null;
+  }
+
   search() {
     this.observations = this.searchSortService.searchObservations(
       this.allObservations,
@@ -124,7 +132,8 @@ export class MyObservationsPage implements OnInit {
   }
 
   showAll() {
-    this.observations = this.allObservations;
+    this.observations = [...this.allObservations];
+    this.searchCriteriaOpen = false;
   }
 
   resetForm() {

@@ -28,11 +28,7 @@ export class ObservationCardComponent implements OnInit {
 
   get imgUrl() {
     if (this.observation.imgData) {
-      if (this.debugService.debugMode) {
-        return (window as any).Ionic.WebView.convertFileSrc(this.observation.imgData.fileUri);
-      } else {
-        return this.observation.imgData.fileUri;
-      }
+      return (window as any).Ionic.WebView.convertFileSrc(this.observation.imgData.fileUri);
     }
   }
 

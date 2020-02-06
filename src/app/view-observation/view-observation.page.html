@@ -40,6 +40,10 @@
 
     <ion-list-header>{{ 'VIEWOBS.LOCATION' | translate }}</ion-list-header>
 
+    <ion-item *ngIf="observation?.mapLocation?.name">
+      <ion-label>{{ observation.mapLocation.name }}</ion-label>
+    </ion-item>
+
     <div ion-item>
       <div item-content #viewMap id="viewMap">
         <div *ngIf="!observation?.mapLocation" class="map-placeholder">

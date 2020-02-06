@@ -13,7 +13,7 @@ export class ImgData {
   @Column({ nullable: true })
   debugDataUri: string;
 
-  @OneToOne(t => Observation, observation => observation.imgData)
+  @OneToOne(t => Observation, observation => observation.imgData, { onDelete: 'CASCADE' })
   @JoinColumn()
   observation: Observation;
 }
