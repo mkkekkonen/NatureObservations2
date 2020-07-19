@@ -43,7 +43,7 @@
     "esri-leaflet-geocoder": "^2.3.2",
     "leaflet": "^1.6.0",
     "leaflet-providers": "^1.9.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~6.5.1",
