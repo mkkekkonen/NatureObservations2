@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -13,6 +13,8 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 import { TranslateModule, TranslateLoader, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import bugsnag from '@bugsnag/js';
+import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -23,7 +25,12 @@ import { MyObservationsPageModule } from './my-observations/my-observations.modu
 import { EditObservationPageModule } from './edit-observation/edit-observation.module';
 import { ViewObservationPageModule } from './view-observation/view-observation.module';
 
+import secrets from './secrets.json';
+
 export const createTranslateLoader = (http: HttpClient) => new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+
+const bugsnagClient = bugsnag(secrets.bugsnagApiKey);
+const errorHandlerFactory = () => new BugsnagErrorHandler(bugsnagClient);
 
 @NgModule({
   declarations: [AppComponent],
@@ -55,7 +62,8 @@ export const createTranslateLoader = (http: HttpClient) => new TranslateHttpLoad
     Camera,
     FilePath,
     Geolocation,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: ErrorHandler, useFactory: errorHandlerFactory },
   ],
   bootstrap: [AppComponent]
 })

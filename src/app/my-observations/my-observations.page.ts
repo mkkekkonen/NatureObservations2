@@ -171,4 +171,8 @@ export class MyObservationsPage implements OnInit {
       this.allObservations.splice(indexInAllObservations);
     }
   }
+
+  reload() {
+    window.location.reload();
+  }
 }

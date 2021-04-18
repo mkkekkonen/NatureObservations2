@@ -35,6 +35,7 @@ export class AppComponent {
     this.pages = [
       { text: 'APP.HOME', url: ['/home'] },
       { text: 'APP.NEWOBS', url: ['/edit-observation'] },
+      { text: 'APP.CREDITS', url: ['/credits'] },
     ];
   }
 
@@ -57,7 +58,7 @@ export class AppComponent {
       }
 
       await this.initializeObservationTypes();
-      await this.initializeObservations();
+      // await this.initializeObservations();
     });
   }
 

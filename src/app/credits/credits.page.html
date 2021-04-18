@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>credits</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Icons from <a href="https://www.flaticon.com/">www.flaticon.com</a></ion-label>
+    </ion-list-header>
+
+    <ion-item *ngFor="let creditsItem of credits">
+      <a [href]="creditsItem.url">{{ creditsItem.name }}</a>
+    </ion-item>
+  </ion-list>
+</ion-content>
