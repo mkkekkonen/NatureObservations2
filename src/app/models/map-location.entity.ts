@@ -1,22 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+export interface ICoords {
+  latitude: number
+  longitude: number
+}
 
-import { Observation } from './observation.entity';
-
-@Entity('maplocation')
 export class MapLocation {
-  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
+  name: string | null;
 
-  @Column('real')
-  latitude: number;
-
-  @Column('real')
-  longitude: number;
-
-  @OneToOne(t => Observation, observation => observation.mapLocation, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  observation: Observation;
+  coords: ICoords
 }
