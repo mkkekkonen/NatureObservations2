@@ -25,7 +25,7 @@ export const getFetchOneClause = (tableName: string, id: number) =>
 export abstract class AbstractGateway {
   db: SQLiteObject;
 
-  constructor(db: SQLiteObject) {
+  constructor(db?: SQLiteObject) {
     this.db = db;
   }
 
