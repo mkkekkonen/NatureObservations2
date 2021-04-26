@@ -33,7 +33,7 @@ export abstract class AbstractGateway {
 
   abstract getValueNames: () => string[];
 
-  abstract getPlaceholderCount: () => number;
+  getPlaceholderCount = () => this.getValueNames().length;
 
   abstract validateValues: (data: any[]) => void;
 

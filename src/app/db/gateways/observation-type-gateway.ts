@@ -9,8 +9,6 @@ export class ObservationTypeGateway extends AbstractGateway {
 
   getValueNames = () => ['name', 'imageFileName'];
 
-  getPlaceholderCount = () => this.getValueNames().length;
-
   validateValues = (data: any[]) => {
     if (data.length !== this.getPlaceholderCount()) {
       throw new Error('Invalid data');

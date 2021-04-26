@@ -1,21 +1,17 @@
-import moment from 'moment';
 import _ from 'lodash';
 
 import { AbstractGateway } from './abstract-gateway';
 
-export class ObservationGateway extends AbstractGateway {
+export class MapLocationGateway extends AbstractGateway {
   validationArray = [
-    'string',
-    'string',
-    (data: any) => moment(data).isValid(),
-    'number',
+    (data: any) => data === null || typeof data === 'string',
     'number',
     'number',
   ];
 
-  getTableName = () => 'observation';
+  getTableName = () => 'mapLocation';
 
-  getValueNames = () => ['title', 'description', 'date', 'type', 'mapLocationId', 'imgDataId'];
+  getValueNames = () => ['name', 'latitude', 'longitude'];
 
   validateValues = (data: any[]) => {
     if (data.length !== this.getPlaceholderCount()) {
@@ -24,9 +20,7 @@ export class ObservationGateway extends AbstractGateway {
 
     const validationArray = _.zip(this.getValueNames(), data, this.validationArray);
 
-    for (let i = 0; i < validationArray.length; i++) {
-      const entry = validationArray[i];
-
+    for (let entry of validationArray) {
       const [valueName, value, validator] = entry;
 
       if (typeof validator === 'function') {

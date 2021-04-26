@@ -9,8 +9,6 @@ export class ImgDataGateway extends AbstractGateway {
 
   getValueNames = () => ['fileUri', 'debugDataUri'];
 
-  getPlaceholderCount = () => this.getValueNames().length;
-
   validateValues = (data: any[]) => {
     if (data.length !== this.getPlaceholderCount()) {
       throw new Error('Invalid data');
