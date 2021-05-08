@@ -104,9 +104,14 @@
     </ion-fab-button>
   </ion-fab>
 
-  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+  <!-- <ion-fab vertical="bottom" horizontal="start" slot="fixed">
     <ion-fab-button color="success" (click)="reload()">
       <img src="assets/icons/refresh.png" width="30" />
+    </ion-fab-button>
+  </ion-fab> -->
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+    <ion-fab-button color="danger" [routerLink]="debugUrl">
+      <ion-icon name="bug"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-content>

@@ -93,5 +93,8 @@
   },
   "ERROR": {
     "SAVE": "Error saving observation data"
+  },
+  "DEBUG": {
+    "NUKEDB": "Nuke DB"
   }
 }

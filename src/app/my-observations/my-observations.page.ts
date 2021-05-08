@@ -47,6 +47,7 @@ export class MyObservationsPage implements OnInit {
   observations: Observation[] = null;
 
   newObservationUrl = ['/edit-observation'];
+  debugUrl = ['/debug'];
 
   constructor(
     private modalController: ModalController,

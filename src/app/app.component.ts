@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import * as moment from 'moment';
 
 import { DbService } from './db.service';
+import { MigrationRunnerService } from './db/migration-runner.service';
 import { ObservationType, Observation, MapLocation } from './models';
 
 import observationTypes from '../assets/json/observation-types';
@@ -29,6 +30,7 @@ export class AppComponent {
     private translateService: TranslateService,
     private globalization: Globalization,
     private dbService: DbService,
+    private migrationRunnerService: MigrationRunnerService,
   ) {
     this.initializeApp();
 
@@ -36,78 +38,79 @@ export class AppComponent {
       { text: 'APP.HOME', url: ['/home'] },
       { text: 'APP.NEWOBS', url: ['/edit-observation'] },
       { text: 'APP.CREDITS', url: ['/credits'] },
+      { text: 'APP.DEBUG', url: ['/debug'] }
     ];
   }
 
   async initializeApp() {
-    this.platform.ready().then(async () => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
+    await this.platform.ready();
 
-      this.translateService.setDefaultLang('fi');
+    this.statusBar.styleDefault();
+    this.splashScreen.hide();
 
-      if ((<any>window).cordova) {
-        this.globalization.getPreferredLanguage()
-          .then(result => result.value.substring(0, 2).toLowerCase())
-          .then(code => {
-            if (code === 'fi')
-              this.setLanguage('fi');
-            else
-              this.setLanguage('en');
-          });
-      }
+    this.translateService.setDefaultLang('fi');
 
-      await this.initializeObservationTypes();
-      // await this.initializeObservations();
-    });
+    if ((<any>window).cordova) {
+      const language = await this.globalization.getPreferredLanguage();
+      const code = language.value.substring(0, 2).toLowerCase();
+      if (code === 'fi')
+        this.setLanguage('fi');
+      else
+        this.setLanguage('en');
+    }
+
+    await this.migrationRunnerService.runMigrations();
+
+    // await this.initializeObservationTypes();
+    // await this.initializeObservations();
   }
 
   async initializeObservationTypes() {
-    const connection = await this.dbService.getConnection();
+    // const connection = await this.dbService.getConnection();
 
-    const typeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
+    // const typeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
 
-    if ((await typeRepository.count()) > 0) {
-      return;
-    }
+    // if ((await typeRepository.count()) > 0) {
+    //   return;
+    // }
 
-    const types = observationTypes.map(typeData => {
-      const observationType = new ObservationType();
-      observationType.name = typeData.name;
-      observationType.imageFileName = typeData.icon;
-      return observationType;
-    });
+    // const types = observationTypes.map(typeData => {
+    //   const observationType = new ObservationType();
+    //   observationType.name = typeData.name;
+    //   observationType.imageFileName = typeData.icon;
+    //   return observationType;
+    // });
 
-    await typeRepository.save(types);
+    // await typeRepository.save(types);
   }
 
   async initializeObservations() {
-    const connection = await this.dbService.getConnection();
+    // const connection = await this.dbService.getConnection();
 
-    const observationRepository = await connection.getRepository('observation') as Repository<Observation>;
-    const observationTypeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
-    const mapLocationRepository = await connection.getRepository('maplocation') as Repository<MapLocation>;
+    // const observationRepository = await connection.getRepository('observation') as Repository<Observation>;
+    // const observationTypeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
+    // const mapLocationRepository = await connection.getRepository('maplocation') as Repository<MapLocation>;
 
-    if ((await observationRepository.count() > 0)) {
-      return;
-    }
+    // if ((await observationRepository.count() > 0)) {
+    //   return;
+    // }
 
-    const obsType = await observationTypeRepository.findOne();
+    // const obsType = await observationTypeRepository.findOne();
 
-    const observation = new Observation();
-    observation.title = 'Testi';
-    observation.description = 'Testi';
-    observation.date = moment.default().format('YYYY-MM-DD HH:mm:ss');
-    observation.type = obsType;
+    // const observation = new Observation();
+    // observation.title = 'Testi';
+    // observation.description = 'Testi';
+    // observation.date = moment.default().format('YYYY-MM-DD HH:mm:ss');
+    // observation.type = obsType;
 
-    const mapLocation = new MapLocation();
-    mapLocation.name = 'Mansesteri';
-    mapLocation.latitude = 61.497480;
-    mapLocation.longitude = 23.757250;
-    mapLocation.observation = observation;
+    // const mapLocation = new MapLocation();
+    // mapLocation.name = 'Mansesteri';
+    // mapLocation.latitude = 61.497480;
+    // mapLocation.longitude = 23.757250;
+    // mapLocation.observation = observation;
 
-    await observationRepository.save(observation);
-    await mapLocationRepository.save(mapLocation);
+    // await observationRepository.save(observation);
+    // await mapLocationRepository.save(mapLocation);
   }
 
   setLanguage(lang: string) {
