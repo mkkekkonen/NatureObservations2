@@ -1,7 +1,7 @@
 import moment from 'moment';
 import _ from 'lodash';
 
-import { AbstractGateway } from './abstract-gateway';
+import { AbstractGateway, TableName } from './abstract-gateway';
 
 export class ObservationGateway extends AbstractGateway {
   validationArray = [
@@ -13,7 +13,7 @@ export class ObservationGateway extends AbstractGateway {
     'number',
   ];
 
-  getTableName = () => 'observation';
+  getTableName = (): TableName => 'observation';
 
   getValueNames = () => ['title', 'description', 'date', 'type', 'mapLocationId', 'imgDataId'];
 

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { AbstractGateway } from './abstract-gateway';
+import { AbstractGateway, TableName } from './abstract-gateway';
 
 export class MapLocationGateway extends AbstractGateway {
   validationArray = [
@@ -9,7 +9,7 @@ export class MapLocationGateway extends AbstractGateway {
     'number',
   ];
 
-  getTableName = () => 'mapLocation';
+  getTableName = (): TableName => 'mapLocation';
 
   getValueNames = () => ['name', 'latitude', 'longitude'];
 

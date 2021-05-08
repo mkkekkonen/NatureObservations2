@@ -27,7 +27,11 @@ const routes: Routes = [
   {
     path: 'credits',
     component: CreditsPage,
+  },  {
+    path: 'debug',
+    loadChildren: () => import('./debug/debug.module').then( m => m.DebugPageModule)
   },
+
 ];
 
 @NgModule({

@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
-import { AbstractGateway } from './abstract-gateway';
+import { AbstractGateway, TableName } from './abstract-gateway';
 
 export class ImgDataGateway extends AbstractGateway {
   validationArray = ['string', 'string'];
 
-  getTableName = () => 'imgData';
+  getTableName = (): TableName => 'imgData';
 
   getValueNames = () => ['fileUri', 'debugDataUri'];
 

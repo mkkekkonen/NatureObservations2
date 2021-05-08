@@ -11,27 +11,27 @@ import { Observation, ObservationType, MapLocation, ImgData } from './models';
 export class DbService {
   constructor() { }
 
-  public async getConnection() {
-    try {
-      return await getConnection();
-    } catch(e) {
-      return await this.createConn();
-    }
-  }
+  // public async getConnection() {
+  //   try {
+  //     return await getConnection();
+  //   } catch(e) {
+  //     return await this.createConn();
+  //   }
+  // }
 
-  createConn() {
-    return createConnection({
-      type: 'cordova',
-      database: 'nobs',
-      location: 'default',
-      synchronize: true,
-      logging: 'all',
-      entities: [
-        Observation,
-        ObservationType,
-        MapLocation,
-        ImgData,
-      ],
-    });
-  }
+  // createConn() {
+  //   return createConnection({
+  //     type: 'cordova',
+  //     database: 'nobs',
+  //     location: 'default',
+  //     synchronize: true,
+  //     logging: 'all',
+  //     entities: [
+  //       Observation,
+  //       ObservationType,
+  //       MapLocation,
+  //       ImgData,
+  //     ],
+  //   });
+  // }
 }

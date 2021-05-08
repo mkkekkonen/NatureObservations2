@@ -1,35 +1,39 @@
-import { SQLiteObject } from '@ionic-native/sqlite/ngx';
+import { AbstractDbAdapter } from '../adapters/abstract-db-adapter';
 
 import _ from 'lodash';
 
-export const getInsertClause = (tableName: string, placeholderCount: number) => {
+export type TableName = 'observation' | 'imgData' | 'mapLocation' | 'observationType' | 'lastMigration';
+
+export const getInsertClause = (tableName: TableName, valueNames: string[]) => {
+  const valueNamesStr = valueNames.join(', ')
+
   const placeholderArr = [];
-  for (let i = 0; i < placeholderCount; i++) {
+  for (let i = 0; i < valueNames.length; i++) {
     placeholderArr.push('?');
   }
   const placeholders = `(${placeholderArr.join(', ')})`;
 
-  return `INSERT INTO ${tableName} VALUES ${placeholders}`;
+  return `INSERT INTO ${tableName} (${valueNamesStr}) VALUES ${placeholders}`;
 };
 
-export const getUpdateClause = (tableName: string, id: number, valueNames: string[]) => {
+export const getUpdateClause = (tableName: TableName, id: number, valueNames: string[]) => {
   const namedPlaceholders = valueNames.map(name => `${name} = ?`).join(', ');
-  return `UPDATE ${tableName} SET ${namedPlaceholders} WHERE id = ${id}`;
+  return `UPDATE ${tableName} SET ${namedPlaceholders} WHERE id = ?`;
 };
 
-export const getFetchAllClause = (tableName: string) => `SELECT * FROM ${tableName}`;
+export const getFetchAllClause = (tableName: TableName) => `SELECT * FROM ${tableName}`;
 
-export const getFetchOneClause = (tableName: string, id: number) =>
-  `SELECT * FROM ${tableName} WHERE id = ${id}`;
+export const getFetchOneClause = (tableName: TableName) =>
+  `SELECT * FROM ${tableName} WHERE id = ?`;
 
 export abstract class AbstractGateway {
-  db: SQLiteObject;
+  db: AbstractDbAdapter;
 
-  constructor(db?: SQLiteObject) {
+  constructor(db?: AbstractDbAdapter) {
     this.db = db;
   }
 
-  abstract getTableName: () => string;
+  abstract getTableName: () => TableName;
 
   abstract getValueNames: () => string[];
 
@@ -40,7 +44,7 @@ export abstract class AbstractGateway {
   insert = (data: any[]) => {
     this.validateValues(data);
     return this.db.executeSql(
-      getInsertClause(this.getTableName(), this.getPlaceholderCount()),
+      getInsertClause(this.getTableName(), this.getValueNames()),
       data,
     );
   }
@@ -58,6 +62,6 @@ export abstract class AbstractGateway {
   )
 
   getById = (id: number) => this.db.executeSql(
-    getFetchOneClause(this.getTableName(), id)
+    getFetchOneClause(this.getTableName())
   )
 }
