@@ -5,6 +5,12 @@ export class ObservationType {
 
   imageFileName: string;
 
+  constructor(name: string, imageFileName: string, id?: number) {
+    this.id = id;
+    this.name = name;
+    this.imageFileName = imageFileName;
+  }
+
   get translationKey() {
     return `OBSTYPE.${this.name}`;
   }

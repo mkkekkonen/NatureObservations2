@@ -19,5 +19,23 @@ export class Observation {
 
   imgData: ImgData | null;
 
+  constructor(
+    title: string,
+    description: string | null,
+    date: moment.Moment,
+    type: ObservationType,
+    mapLocation: MapLocation | null,
+    imgData: ImgData | null,
+    id?: number,
+  ) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.date = date;
+    this.type = type;
+    this.mapLocation = mapLocation;
+    this.imgData = imgData;
+  }
+
   toString = () =>  `${this.title}: ${this.description}; ${this.date}; ${this.type && this.type.name}`;
 }

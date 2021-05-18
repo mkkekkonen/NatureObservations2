@@ -1,8 +1,10 @@
 import _ from 'lodash';
 
+import { MapLocation } from '../../models/map-location.entity';
+
 import { AbstractGateway, TableName } from './abstract-gateway';
 
-export class MapLocationGateway extends AbstractGateway {
+export class MapLocationGateway extends AbstractGateway<MapLocation> {
   validationArray = [
     (data: any) => data === null || typeof data === 'string',
     'number',
@@ -34,4 +36,8 @@ export class MapLocationGateway extends AbstractGateway {
       }
     }
   }
+
+  getValues = (obj: MapLocation) => [obj.name, obj.coords.latitude, obj.coords.longitude];
+
+  getObjectFromRowData = (data: any) => Promise.resolve(new MapLocation(data.id, data.name, data.latitude, data.longitude));
 }

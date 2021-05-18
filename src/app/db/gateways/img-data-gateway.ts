@@ -1,8 +1,14 @@
 import _ from 'lodash';
 
+import { ImgData } from '../../models/img-data.entity';
+
 import { AbstractGateway, TableName } from './abstract-gateway';
 
-export class ImgDataGateway extends AbstractGateway {
+const getData = (obj: ImgData) => [obj.fileUri, obj.debugDataUri];
+
+const getObj = (row: any) => new ImgData(row.id, row.fileUri, row.debugDataUri);
+
+export class ImgDataGateway extends AbstractGateway<ImgData> {
   validationArray = ['string', 'string'];
 
   getTableName = (): TableName => 'imgData';
@@ -26,4 +32,8 @@ export class ImgDataGateway extends AbstractGateway {
       }
     }
   }
+
+  getValues = (obj: ImgData) => [obj.fileUri, obj.debugDataUri];
+
+  getObjectFromRowData = (data: any) => Promise.resolve(new ImgData(data.id, data.fileUri, data.debugDataUri));
 }

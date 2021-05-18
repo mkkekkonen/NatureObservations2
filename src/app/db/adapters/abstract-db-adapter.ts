@@ -11,4 +11,8 @@ export abstract class AbstractDbAdapter {
   }
 
   abstract executeSql: (sql: string, values?: any[]) => Promise<any>;
+
+  abstract getNumberOfResultRows: (res: any) => number;
+
+  abstract getRowFromResult: (res: any, rowIndex: number) => any;
 }

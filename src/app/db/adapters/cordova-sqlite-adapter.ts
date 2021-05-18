@@ -12,4 +12,8 @@ export class CordovaSqliteAdapter extends AbstractDbAdapter {
   executeSql = (sql: string, values?: any[]) => {
     return this.getDb().executeSql(sql, values);
   }
+
+  getNumberOfResultRows = (res: any) => res.rows.length;
+
+  getRowFromResult = (res: any, rowIndex: number) => res.rows.item(rowIndex);
 }

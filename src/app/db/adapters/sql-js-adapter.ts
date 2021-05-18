@@ -1,6 +1,7 @@
 import fs from 'fs';
 
 import { Database } from 'sql.js';
+import _ from 'lodash';
 
 import { AbstractDbAdapter } from './abstract-db-adapter';
 
@@ -19,5 +20,15 @@ export class SqlJsAdapter extends AbstractDbAdapter {
     const data = this.getDb().export();
     const buf = Buffer.from(data);
     fs.writeFileSync(filename, buf);
+  }
+
+  getNumberOfResultRows = (res: any) => {
+    const [firstCols] = res;
+    return firstCols.values.length;
+  }
+
+  getRowFromResult = (res: any, rowIndex: number) => {
+    const [firstCols] = res;
+    return _.zipObject(firstCols.columns, firstCols.values[rowIndex]);
   }
 }

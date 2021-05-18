@@ -2,6 +2,10 @@ import { AbstractDbAdapter } from '../adapters/abstract-db-adapter';
 
 import _ from 'lodash';
 
+interface IModel {
+  id?: number
+}
+
 export type TableName = 'observation' | 'imgData' | 'mapLocation' | 'observationType' | 'lastMigration';
 
 export const getInsertClause = (tableName: TableName, valueNames: string[]) => {
@@ -26,7 +30,7 @@ export const getFetchAllClause = (tableName: TableName) => `SELECT * FROM ${tabl
 export const getFetchOneClause = (tableName: TableName) =>
   `SELECT * FROM ${tableName} WHERE id = ?`;
 
-export abstract class AbstractGateway {
+export abstract class AbstractGateway<T extends IModel> {
   db: AbstractDbAdapter;
 
   constructor(db?: AbstractDbAdapter) {
@@ -35,13 +39,67 @@ export abstract class AbstractGateway {
 
   abstract getTableName: () => TableName;
 
-  abstract getValueNames: () => string[];
+  abstract getValues: (obj: T) => any[];
 
-  getPlaceholderCount = () => this.getValueNames().length;
+  abstract getValueNames: () => string[];
 
   abstract validateValues: (data: any[]) => void;
 
-  insert = (data: any[]) => {
+  abstract getObjectFromRowData: (row: any) => Promise<T>;
+
+  insert = async (obj: T) => {
+    try {
+      await this.sqlInsert(this.getValues(obj));
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+
+  update = async (obj: T) => {
+    if (!obj.id) {
+      throw new Error('No ID provided!');
+    }
+
+    try {
+      await this.sqlUpdate(obj.id, this.getValues(obj));
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+
+  getAll = async () => {
+    const data: T[] = [];
+
+    try {
+      const res = await this.sqlGetAll();
+      for (let i = 0; i < this.db.getNumberOfResultRows(res); i++) {
+        const item = this.db.getRowFromResult(res, i);
+        data.push(await this.getObjectFromRowData(item));
+      }
+    } catch (e) {
+      throw new Error(e.message);
+    }
+
+    return data;
+  }
+
+  getById = async (id: number) => {
+    try {
+      const res = await this.sqlGetById(id);
+      if (res.rows.length === 0) {
+        return null;
+      } else {
+        const item = res.rows.item(0);
+        return this.getObjectFromRowData(item);
+      }
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+
+  getPlaceholderCount = () => this.getValueNames().length;
+
+  private sqlInsert = (data: any[]) => {
     this.validateValues(data);
     return this.db.executeSql(
       getInsertClause(this.getTableName(), this.getValueNames()),
@@ -49,7 +107,7 @@ export abstract class AbstractGateway {
     );
   }
 
-  update = (id: number, data: any[]) => {
+  private sqlUpdate = (id: number, data: any[]) => {
     this.validateValues(data);
     return this.db.executeSql(
       getUpdateClause(this.getTableName(), id, this.getValueNames()),
@@ -57,11 +115,11 @@ export abstract class AbstractGateway {
     );
   }
 
-  getAll = () => this.db.executeSql(
+  private sqlGetAll = () => this.db.executeSql(
     getFetchAllClause(this.getTableName())
   )
 
-  getById = (id: number) => this.db.executeSql(
+  private sqlGetById = (id: number) => this.db.executeSql(
     getFetchOneClause(this.getTableName())
   )
 }

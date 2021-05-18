@@ -1,8 +1,10 @@
 import _ from 'lodash';
 
-import { AbstractGateway, TableName } from "./abstract-gateway";
+import { ObservationType } from '../../models/observation-type.entity';
 
-export class ObservationTypeGateway extends AbstractGateway {
+import { AbstractGateway, TableName } from './abstract-gateway';
+
+export class ObservationTypeGateway extends AbstractGateway<ObservationType> {
   validationArray = ['string', 'string'];
 
   getTableName = (): TableName => 'observationType';
@@ -26,4 +28,8 @@ export class ObservationTypeGateway extends AbstractGateway {
       }
     }
   }
+
+  getValues = (obj: ObservationType) => [obj.name, obj.imageFileName];
+
+  getObjectFromRowData = (data: any) => Promise.resolve(new ObservationType(data.id, data.name, data.imageFileName));
 }
