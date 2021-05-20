@@ -3,6 +3,7 @@ import {
   getUpdateClause,
   getFetchAllClause,
   getFetchOneClause,
+  getFetchLastIdClause,
 } from './abstract-gateway';
 
 describe('clause functions', () => {
@@ -32,5 +33,11 @@ describe('clause functions', () => {
     const id = 21;
     expect(getFetchOneClause(tableName))
       .toEqual('SELECT * FROM observation WHERE id = ?');
+  });
+
+  it('correctly generates fetch last ID clause', () => {
+    const tableName = 'observation';
+    expect(getFetchLastIdClause(tableName))
+      .toEqual('SELECT id FROM observation ORDER BY id DESC LIMIT 1');
   });
 });

@@ -30,6 +30,9 @@ export const getFetchAllClause = (tableName: TableName) => `SELECT * FROM ${tabl
 export const getFetchOneClause = (tableName: TableName) =>
   `SELECT * FROM ${tableName} WHERE id = ?`;
 
+export const getFetchLastIdClause = (tableName: TableName) =>
+  `SELECT id FROM ${tableName} ORDER BY id DESC LIMIT 1`;
+
 export abstract class AbstractGateway<T extends IModel> {
   db: AbstractDbAdapter;
 
@@ -50,6 +53,8 @@ export abstract class AbstractGateway<T extends IModel> {
   insert = async (obj: T) => {
     try {
       await this.sqlInsert(this.getValues(obj));
+      const id = await this.getLastId();
+      obj.id = id;
     } catch (e) {
       throw new Error(e.message);
     }
@@ -86,12 +91,21 @@ export abstract class AbstractGateway<T extends IModel> {
   getById = async (id: number) => {
     try {
       const res = await this.sqlGetById(id);
-      if (res.rows.length === 0) {
+      if (this.db.getNumberOfResultRows(res) === 0) {
         return null;
       } else {
-        const item = res.rows.item(0);
+        const item = this.db.getRowFromResult(res, 0);
         return this.getObjectFromRowData(item);
       }
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+
+  getLastId = async () => {
+    try {
+      const res = await this.sqlGetLastId();
+      return this.db.getLastIdFromResult(res);
     } catch (e) {
       throw new Error(e.message);
     }
@@ -109,6 +123,7 @@ export abstract class AbstractGateway<T extends IModel> {
 
   private sqlUpdate = (id: number, data: any[]) => {
     this.validateValues(data);
+    data.push(id);
     return this.db.executeSql(
       getUpdateClause(this.getTableName(), id, this.getValueNames()),
       data,
@@ -120,6 +135,11 @@ export abstract class AbstractGateway<T extends IModel> {
   )
 
   private sqlGetById = (id: number) => this.db.executeSql(
-    getFetchOneClause(this.getTableName())
+    getFetchOneClause(this.getTableName()),
+    [id],
+  )
+
+  private sqlGetLastId = () => this.db.executeSql(
+    getFetchLastIdClause(this.getTableName())
   )
 }

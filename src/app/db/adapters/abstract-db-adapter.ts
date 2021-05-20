@@ -15,4 +15,6 @@ export abstract class AbstractDbAdapter {
   abstract getNumberOfResultRows: (res: any) => number;
 
   abstract getRowFromResult: (res: any, rowIndex: number) => any;
+
+  abstract getLastIdFromResult: (res: any) => number;
 }

@@ -11,7 +11,7 @@ it('works', () => {
   expect(true).toBe(true);
 });
 
-beforeEach(async () => {
+beforeAll(async () => {
   adapter = await createSqlJsAdapterWithDb();
   gateway = new MapLocationGateway(adapter);
   migrations.forEach(migration => migration.forwards(adapter));
@@ -20,11 +20,26 @@ beforeEach(async () => {
 describe('insert', () => {
   it('inserts a map location', async () => {
     const obj = new MapLocation('Tesoma', 12.3456, 78.9012);
-
-    gateway.insert(obj);
+    await gateway.insert(obj);
+    expect(obj.id).toEqual(1);
 
     const all = await gateway.getAll();
-
     expect(all.length).toEqual(1);
+  });
+
+  it('updates the map location', async () => {
+    const obj = new MapLocation('Hallila', 12.3456, 78.9012, 1);
+    await gateway.update(obj);
+
+    const all = await gateway.getAll();
+    expect(all.length).toEqual(1);
+    const [fromDb] = all;
+    expect(fromDb.id).toEqual(1);
+    expect(fromDb.name).toEqual('Hallila');
+  });
+
+  it('gets the map location by ID', async () => {
+    const obj = await gateway.getById(1);
+    expect(obj).toEqual(new MapLocation('Hallila', 12.3456, 78.9012, 1));
   });
 });

@@ -58,7 +58,7 @@ export class ObservationGateway extends AbstractGateway<Observation> {
       const mapLocation = data.mapLocationId ? await mapLocationGateway.getById(data.mapLocationId) : null;
       const imgData = data.imgDataId ? await imgDataGateway.getById(data.imgDataId) : null;
 
-      return new Observation(data.id, data.title, data.description, moment(data.date), type, mapLocation, imgData);
+      return new Observation(data.title, data.description, moment(data.date), type, mapLocation, imgData, data.id);
     } catch (e) {
       return null;
     }

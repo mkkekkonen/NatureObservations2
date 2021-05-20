@@ -24,11 +24,24 @@ export class SqlJsAdapter extends AbstractDbAdapter {
 
   getNumberOfResultRows = (res: any) => {
     const [firstCols] = res;
+    if (!firstCols) {
+      return 0;
+    }
     return firstCols.values.length;
   }
 
   getRowFromResult = (res: any, rowIndex: number) => {
     const [firstCols] = res;
+    if (!firstCols) {
+      return null;
+    }
     return _.zipObject(firstCols.columns, firstCols.values[rowIndex]);
+  }
+
+  getLastIdFromResult = (res: any) => {
+    const [firstCols] = res;
+    const [firstValues] = firstCols.values;
+    const [id] = firstValues;
+    return id;
   }
 }

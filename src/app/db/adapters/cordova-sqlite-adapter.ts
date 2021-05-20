@@ -16,4 +16,6 @@ export class CordovaSqliteAdapter extends AbstractDbAdapter {
   getNumberOfResultRows = (res: any) => res.rows.length;
 
   getRowFromResult = (res: any, rowIndex: number) => res.rows.item(rowIndex);
+
+  getLastIdFromResult = (res: any) => res.rows.item(0).id;
 }
