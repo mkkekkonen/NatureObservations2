@@ -13,6 +13,10 @@ export class CordovaSqliteAdapter extends AbstractDbAdapter {
     return this.getDb().executeSql(sql, values);
   }
 
+  executeTransaction = (sql: string, values?: any) => {
+    return Promise.resolve({});
+  };
+
   getNumberOfResultRows = (res: any) => res.rows.length;
 
   getRowFromResult = (res: any, rowIndex: number) => res.rows.item(rowIndex);

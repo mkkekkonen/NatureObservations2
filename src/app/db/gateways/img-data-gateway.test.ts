@@ -7,7 +7,7 @@ import { ImgData } from '../../models/img-data.entity';
 let adapter: SqlJsAdapter;
 let gateway: ImgDataGateway;
 
-beforeEach(async () => {
+beforeAll(async () => {
   adapter = await createSqlJsAdapterWithDb();
   gateway = new ImgDataGateway(adapter);
   migrations.forEach(migration => migration.forwards(adapter));
@@ -22,5 +22,22 @@ describe('ImgData', () => {
     const all = await gateway.getAll();
 
     expect(all.length).toEqual(1);
+  });
+
+  it('updates image data', async () => {
+    const obj = new ImgData('file:///foo/bar', 'abcdef', 1);
+    await gateway.update(obj);
+
+    const all = await gateway.getAll()
+    expect(all.length).toEqual(1);
+
+    const [fromDb] = all;
+    expect(fromDb.id).toEqual(1);
+    expect(fromDb.fileUri).toEqual('file:///foo/bar');
+  });
+
+  it('gets image data by ID', async () => {
+    const obj = await gateway.getById(1);
+    expect(obj).toEqual(new ImgData('file:///foo/bar', 'abcdef', 1));
   });
 });

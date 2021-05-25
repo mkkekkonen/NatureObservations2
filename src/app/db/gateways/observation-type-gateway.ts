@@ -31,5 +31,5 @@ export class ObservationTypeGateway extends AbstractGateway<ObservationType> {
 
   getValues = (obj: ObservationType) => [obj.name, obj.imageFileName];
 
-  getObjectFromRowData = (data: any) => Promise.resolve(new ObservationType(data.id, data.name, data.imageFileName));
+  getObjectFromRowData = (data: any) => new ObservationType(data.id, data.name, data.imageFileName);
 }

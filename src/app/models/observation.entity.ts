@@ -13,19 +13,19 @@ export class Observation {
 
   date: moment.Moment;
 
-  type: ObservationType;
+  type: string;
 
-  mapLocation: MapLocation | null;
+  mapLocationId: number | null;
 
-  imgData: ImgData | null;
+  imgDataId: number | null;
 
   constructor(
     title: string,
     description: string | null,
     date: moment.Moment,
-    type: ObservationType,
-    mapLocation: MapLocation | null,
-    imgData: ImgData | null,
+    type: string,
+    mapLocationId: number | null,
+    imgDataId: number | null,
     id?: number,
   ) {
     this.id = id;
@@ -33,9 +33,9 @@ export class Observation {
     this.description = description;
     this.date = date;
     this.type = type;
-    this.mapLocation = mapLocation;
-    this.imgData = imgData;
+    this.mapLocationId = mapLocationId;
+    this.imgDataId = imgDataId;
   }
 
-  toString = () =>  `${this.title}: ${this.description}; ${this.date}; ${this.type && this.type.name}`;
+  toString = () =>  `${this.title}: ${this.description}; ${this.date}; ${this.type}`;
 }

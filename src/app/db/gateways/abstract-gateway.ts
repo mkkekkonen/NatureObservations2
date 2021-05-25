@@ -48,7 +48,7 @@ export abstract class AbstractGateway<T extends IModel> {
 
   abstract validateValues: (data: any[]) => void;
 
-  abstract getObjectFromRowData: (row: any) => Promise<T>;
+  abstract getObjectFromRowData: (row: any) => T;
 
   insert = async (obj: T) => {
     try {

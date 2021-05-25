@@ -11,7 +11,7 @@ export class ObservationGateway extends AbstractGateway<Observation> {
     'string',
     'string',
     (data: any) => moment(data).isValid(),
-    'number',
+    'string',
     'number',
     'number',
   ];
@@ -44,21 +44,11 @@ export class ObservationGateway extends AbstractGateway<Observation> {
     }
   }
 
-  getValues = (obj: Observation) => [obj.title, obj.description, obj.date, obj.type.id, obj.mapLocation.id, obj.imgData.id];
+  getValues = (obj: Observation) => [obj.title, obj.description, obj.date, obj.type, obj.mapLocationId, obj.imgDataId];
 
-  getObjectFromRowData = async (data: any) => {
-    const observationTypeGateway = new ObservationTypeGateway(this.db);
-    const mapLocationGateway = new MapLocationGateway(this.db);
-    const imgDataGateway = new ImgDataGateway(this.db);
-
+  getObjectFromRowData = (data: any) => {
     try {
-      const types = await observationTypeGateway.getAll();
-      const type = types.find(t => t.name === data.type);
-
-      const mapLocation = data.mapLocationId ? await mapLocationGateway.getById(data.mapLocationId) : null;
-      const imgData = data.imgDataId ? await imgDataGateway.getById(data.imgDataId) : null;
-
-      return new Observation(data.title, data.description, moment(data.date), type, mapLocation, imgData, data.id);
+      return new Observation(data.title, data.description, moment(data.date), data.type, data.mapLocationId, data.imgDataId, data.id);
     } catch (e) {
       return null;
     }

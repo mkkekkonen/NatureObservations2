@@ -39,5 +39,5 @@ export class MapLocationGateway extends AbstractGateway<MapLocation> {
 
   getValues = (obj: MapLocation) => [obj.name, obj.coords.latitude, obj.coords.longitude];
 
-  getObjectFromRowData = (data: any) => Promise.resolve(new MapLocation(data.name, data.latitude, data.longitude, data.id));
+  getObjectFromRowData = (data: any) => new MapLocation(data.name, data.latitude, data.longitude, data.id);
 }

@@ -16,6 +16,16 @@ export class SqlJsAdapter extends AbstractDbAdapter {
     return Promise.resolve(this.getDb().exec(sql, values));
   }
 
+  /* 
+    See https://sql.js.org/documentation/Database.html#%255B%2522exec%2522%255D
+    "If you use the params argument as an array, you cannot provide an sql
+    string that contains several statements (separated by ;). This limitation
+    does not apply to params as an object."
+  */
+  executeTransaction = (sql: string, values: any) => {
+    return Promise.resolve(this.getDb().exec(sql, values));
+  }
+
   writeDatabase = (filename: string = 'testDb.sqlite') => {
     const data = this.getDb().export();
     const buf = Buffer.from(data);
@@ -32,7 +42,7 @@ export class SqlJsAdapter extends AbstractDbAdapter {
 
   getRowFromResult = (res: any, rowIndex: number) => {
     const [firstCols] = res;
-    if (!firstCols) {
+    if (!firstCols || !firstCols.values[rowIndex]) {
       return null;
     }
     return _.zipObject(firstCols.columns, firstCols.values[rowIndex]);

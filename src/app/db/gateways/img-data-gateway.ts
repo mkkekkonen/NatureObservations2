@@ -35,5 +35,5 @@ export class ImgDataGateway extends AbstractGateway<ImgData> {
 
   getValues = (obj: ImgData) => [obj.fileUri, obj.debugDataUri];
 
-  getObjectFromRowData = (data: any) => Promise.resolve(new ImgData(data.id, data.fileUri, data.debugDataUri));
+  getObjectFromRowData = (data: any) => new ImgData(data.fileUri, data.debugDataUri, data.id);
 }
