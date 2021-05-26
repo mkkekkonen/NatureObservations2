@@ -10,7 +10,9 @@ let gateway: ImgDataGateway;
 beforeAll(async () => {
   adapter = await createSqlJsAdapterWithDb();
   gateway = new ImgDataGateway(adapter);
-  migrations.forEach(migration => migration.forwards(adapter));
+  for(const migration of migrations) {
+    await migration.forwards(adapter);
+  }
 });
 
 describe('ImgData', () => {

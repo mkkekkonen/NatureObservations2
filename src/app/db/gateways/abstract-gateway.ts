@@ -51,13 +51,9 @@ export abstract class AbstractGateway<T extends IModel> {
   abstract getObjectFromRowData: (row: any) => T;
 
   insert = async (obj: T) => {
-    try {
-      await this.sqlInsert(this.getValues(obj));
-      const id = await this.getLastId();
-      obj.id = id;
-    } catch (e) {
-      throw new Error(e.message);
-    }
+    await this.sqlInsert(this.getValues(obj));
+    const id = await this.getLastId();
+    obj.id = id;
   }
 
   update = async (obj: T) => {
@@ -65,50 +61,34 @@ export abstract class AbstractGateway<T extends IModel> {
       throw new Error('No ID provided!');
     }
 
-    try {
-      await this.sqlUpdate(obj.id, this.getValues(obj));
-    } catch (e) {
-      throw new Error(e.message);
-    }
+    await this.sqlUpdate(obj.id, this.getValues(obj));
   }
 
   getAll = async () => {
     const data: T[] = [];
 
-    try {
-      const res = await this.sqlGetAll();
-      for (let i = 0; i < this.db.getNumberOfResultRows(res); i++) {
-        const item = this.db.getRowFromResult(res, i);
-        data.push(await this.getObjectFromRowData(item));
-      }
-    } catch (e) {
-      throw new Error(e.message);
+    const res = await this.sqlGetAll();
+    for (let i = 0; i < this.db.getNumberOfResultRows(res); i++) {
+      const item = this.db.getRowFromResult(res, i);
+      data.push(await this.getObjectFromRowData(item));
     }
 
     return data;
   }
 
   getById = async (id: number) => {
-    try {
-      const res = await this.sqlGetById(id);
-      if (this.db.getNumberOfResultRows(res) === 0) {
-        return null;
-      } else {
-        const item = this.db.getRowFromResult(res, 0);
-        return this.getObjectFromRowData(item);
-      }
-    } catch (e) {
-      throw new Error(e.message);
+    const res = await this.sqlGetById(id);
+    if (this.db.getNumberOfResultRows(res) === 0) {
+      return null;
+    } else {
+      const item = this.db.getRowFromResult(res, 0);
+      return this.getObjectFromRowData(item);
     }
   }
 
   getLastId = async () => {
-    try {
-      const res = await this.sqlGetLastId();
-      return this.db.getLastIdFromResult(res);
-    } catch (e) {
-      throw new Error(e.message);
-    }
+    const res = await this.sqlGetLastId();
+    return this.db.getLastIdFromResult(res);
   }
 
   getPlaceholderCount = () => this.getValueNames().length;

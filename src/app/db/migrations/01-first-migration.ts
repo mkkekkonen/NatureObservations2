@@ -14,13 +14,13 @@ const migration: IMigration = {
         + 'FOREIGN KEY (imgDataId) REFERENCES imgData (id) ON DELETE CASCADE);'
     await adapter.executeTransaction(sql);
   },
-  backwards: (adapter: AbstractDbAdapter) => {
+  backwards: async (adapter: AbstractDbAdapter) => {
     const sql = 'DROP TABLE IF EXISTS observation;'
       + 'DROP TABLE IF EXISTS imgData;'
       + 'DROP TABLE IF EXISTS mapLocation;'
       + 'DROP TABLE IF EXISTS observationType;'
       + 'DROP TABLE IF EXISTS lastMigration;';
-    adapter.executeTransaction(sql);
+    await adapter.executeTransaction(sql);
   },
 };
 

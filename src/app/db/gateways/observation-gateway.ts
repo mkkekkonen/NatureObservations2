@@ -6,14 +6,16 @@ import { Observation } from '../../models/observation.entity';
 import { AbstractGateway, TableName } from './abstract-gateway';
 import { ObservationTypeGateway, MapLocationGateway, ImgDataGateway } from '.';
 
+const isNumberOrNull = (data: any) => data === null || !isNaN(data);
+
 export class ObservationGateway extends AbstractGateway<Observation> {
   validationArray = [
     'string',
     'string',
     (data: any) => moment(data).isValid(),
     'string',
-    'number',
-    'number',
+    isNumberOrNull,
+    isNumberOrNull,
   ];
 
   getTableName = (): TableName => 'observation';
@@ -44,7 +46,7 @@ export class ObservationGateway extends AbstractGateway<Observation> {
     }
   }
 
-  getValues = (obj: Observation) => [obj.title, obj.description, obj.date, obj.type, obj.mapLocationId, obj.imgDataId];
+  getValues = (obj: Observation) => [obj.title, obj.description, obj.date.format(Observation.dateFormat), obj.type, obj.mapLocationId, obj.imgDataId];
 
   getObjectFromRowData = (data: any) => {
     try {

@@ -42,16 +42,15 @@ const migration: IMigration = {
     let sql = 'CREATE TABLE IF NOT EXISTS observation_new (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, date TEXT, type TEXT NOT NULL, mapLocationId INTEGER, imgDataId INTEGER, '
         + 'FOREIGN KEY (mapLocationId) REFERENCES mapLocation (id) ON DELETE CASCADE, '
         + 'FOREIGN KEY (imgDataId) REFERENCES imgData (id) ON DELETE CASCADE);'
-      + 'INSERT INTO observation_new (title, description, date, type, mapLocationId, imgDataId) VALUES '
-        + observationValues + ';'
+      + (observations.length > 0
+        ? ('INSERT INTO observation_new (title, description, date, type, mapLocationId, imgDataId) VALUES ' + observationValues + ';')
+        : '')
       + 'DROP TABLE IF EXISTS observation;'
       + 'ALTER TABLE observation_new RENAME TO observation;';
 
     await adapter.executeTransaction(sql);
   },
-  backwards: (adapter: AbstractDbAdapter) => {
-    // TODO
-  }
+  backwards: (adapter: AbstractDbAdapter) => Promise.resolve(),
 };
 
 export default migration;

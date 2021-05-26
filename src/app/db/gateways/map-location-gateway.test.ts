@@ -14,10 +14,12 @@ it('works', () => {
 beforeAll(async () => {
   adapter = await createSqlJsAdapterWithDb();
   gateway = new MapLocationGateway(adapter);
-  migrations.forEach(migration => migration.forwards(adapter));
+  for (const migration of migrations) {
+    await migration.forwards(adapter);
+  }
 });
 
-describe('insert', () => {
+describe('MapLocation', () => {
   it('inserts a map location', async () => {
     const obj = new MapLocation('Tesoma', 12.3456, 78.9012);
     await gateway.insert(obj);
