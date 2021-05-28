@@ -5,6 +5,8 @@ import { MapLocation } from './map-location.entity';
 import { ObservationType } from './observation-type.entity';
 
 export class Observation {
+  static dateFormat = 'YYYY-MM-DD HH:mm:ss';
+
   id: number;
 
   title: string;

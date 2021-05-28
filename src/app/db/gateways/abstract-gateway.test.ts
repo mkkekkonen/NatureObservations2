@@ -9,7 +9,7 @@ import {
 describe('clause functions', () => {
   it('correctly generates insert clause', () => {
     const tableName = 'observation';
-    const valueNames = ['id', 'title', 'description', 'date', 'type']
+    const valueNames = ['id', 'title', 'description', 'date', 'type'];
     expect(getInsertClause(tableName, valueNames))
       .toEqual('INSERT INTO observation (id, title, description, date, type) VALUES (?, ?, ?, ?, ?)');
   });

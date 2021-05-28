@@ -12,7 +12,7 @@ export abstract class AbstractDbAdapter {
 
   abstract executeSql: (sql: string, values?: any[]) => Promise<any>;
 
-  abstract executeTransaction: (sql: string, values?: any) => Promise<any>;
+  abstract executeTransaction: (sql: string[], values?: any[][]) => Promise<any>;
 
   abstract getNumberOfResultRows: (res: any) => number;
 

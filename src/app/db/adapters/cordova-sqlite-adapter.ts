@@ -1,5 +1,7 @@
 import { SQLiteObject } from '@ionic-native/sqlite/ngx';
 
+import _ from 'lodash';
+
 import { AbstractDbAdapter } from './abstract-db-adapter';
 
 export class CordovaSqliteAdapter extends AbstractDbAdapter {
@@ -13,8 +15,13 @@ export class CordovaSqliteAdapter extends AbstractDbAdapter {
     return this.getDb().executeSql(sql, values);
   }
 
-  executeTransaction = (sql: string, values?: any) => {
-    return Promise.resolve({});
+  executeTransaction = (sql: string[], values?: any[][]) => {
+    return this.getDb().transaction(tx => {
+      for(const entry of _.zip(sql, values)) {
+        const [sqlRow, rowValues] = entry;
+        tx.executeSql(sqlRow, rowValues);
+      }
+    });
   };
 
   getNumberOfResultRows = (res: any) => res.rows.length;

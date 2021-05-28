@@ -8,14 +8,18 @@ interface IModel {
 
 export type TableName = 'observation' | 'imgData' | 'mapLocation' | 'observationType' | 'lastMigration';
 
-export const getInsertClause = (tableName: TableName, valueNames: string[]) => {
-  const valueNamesStr = valueNames.join(', ')
-
+const getPlaceholders = (valueNames: string[]) => {
   const placeholderArr = [];
   for (let i = 0; i < valueNames.length; i++) {
     placeholderArr.push('?');
   }
-  const placeholders = `(${placeholderArr.join(', ')})`;
+  return `(${placeholderArr.join(', ')})`;
+};
+
+export const getInsertClause = (tableName: TableName, valueNames: string[]) => {
+  const valueNamesStr = valueNames.join(', ')
+
+  const placeholders = getPlaceholders(valueNames);
 
   return `INSERT INTO ${tableName} (${valueNamesStr}) VALUES ${placeholders}`;
 };

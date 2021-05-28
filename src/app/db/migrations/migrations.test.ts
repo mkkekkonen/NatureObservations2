@@ -27,15 +27,17 @@ describe('mig02', () => {
   test('forwards', async () => {
     await mig01.forwards(adapter);
 
-    const insertSql = 'INSERT INTO observationType (name, imageFileName) VALUES '
-        + obsTypes.map(type => `('${type.name}', '${type.icon}')`).join(', ') + ';'
-      + "INSERT INTO mapLocation (name, latitude, longitude) VALUES ('Tesoma', 1.23, 4.56);"
-      + "INSERT INTO imgData (fileUri, debugDataUri) VALUES ('asd', 'fgh');"
-      + 'INSERT INTO observation (title, description, date, typeId, mapLocationId, imgDataId) VALUES '
+    const sql = [
+      'INSERT INTO observationType (name, imageFileName) VALUES '
+        + obsTypes.map(type => `('${type.name}', '${type.icon}')`).join(', '),
+      "INSERT INTO mapLocation (name, latitude, longitude) VALUES ('Tesoma', 1.23, 4.56)",
+      "INSERT INTO imgData (fileUri, debugDataUri) VALUES ('asd', 'fgh')",
+      'INSERT INTO observation (title, description, date, typeId, mapLocationId, imgDataId) VALUES '
         + "('Testi', 'Testi kuvaus', NULL, 3, 1, 1), "
-        + '(NULL, NULL, NULL, 2, NULL, NULL);';
+        + '(NULL, NULL, NULL, 2, NULL, NULL)'
+    ]
 
-    await adapter.executeTransaction(insertSql, []);
+    await adapter.executeTransaction(sql);
 
     await mig02.forwards(adapter);
 

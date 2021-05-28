@@ -22,8 +22,11 @@ export class SqlJsAdapter extends AbstractDbAdapter {
     string that contains several statements (separated by ;). This limitation
     does not apply to params as an object."
   */
-  executeTransaction = (sql: string, values: any) => {
-    return Promise.resolve(this.getDb().exec(sql, values));
+  executeTransaction = (sql: string[], values?: any[][]) => {
+    return Promise.resolve(_.zip(sql, values || []).map(entry => {
+      const [sqlRow, rowValues] = entry;
+      return this.getDb().exec(sqlRow, rowValues);
+    }));
   }
 
   writeDatabase = (filename: string = 'testDb.sqlite') => {
