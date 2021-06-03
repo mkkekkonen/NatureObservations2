@@ -16,11 +16,22 @@ export class CordovaSqliteAdapter extends AbstractDbAdapter {
   }
 
   executeTransaction = (sql: string[], values?: any[][]) => {
-    return this.getDb().transaction(tx => {
-      for(const entry of _.zip(sql, values)) {
-        const [sqlRow, rowValues] = entry;
-        tx.executeSql(sqlRow, rowValues);
-      }
+    return new Promise(async (resolve, reject) => {
+      const res = await this.getDb().transaction(tx => {
+        for(const entry of _.zip(sql, values)) {
+          const [sqlRow, rowValues] = entry;
+          tx.executeSql(
+            sqlRow,
+            rowValues,
+            () => console.log('success'),
+            (tx, error) => {
+              reject(error);
+              return false;
+            },
+          );
+        }
+      });
+      resolve(res);
     });
   };
 

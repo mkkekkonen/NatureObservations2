@@ -61,57 +61,27 @@ export class AppComponent {
 
     await this.migrationRunnerService.runMigrations();
 
-    // await this.initializeObservationTypes();
+    await this.initializeObservationTypes();
     // await this.initializeObservations();
   }
 
   async initializeObservationTypes() {
-    // const connection = await this.dbService.getConnection();
-
-    // const typeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
-
-    // if ((await typeRepository.count()) > 0) {
-    //   return;
-    // }
-
-    // const types = observationTypes.map(typeData => {
-    //   const observationType = new ObservationType();
-    //   observationType.name = typeData.name;
-    //   observationType.imageFileName = typeData.icon;
-    //   return observationType;
-    // });
-
-    // await typeRepository.save(types);
+    const existingTypes = await this.dbService.observationTypeGateway.getAll();
+    if (existingTypes.length === 0) {
+      await Promise.all(observationTypes.map(typeData => {
+        const type = new ObservationType(typeData.name, typeData.icon);
+        return this.dbService.observationTypeGateway.insert(type);
+      }));
+    }
   }
 
-  async initializeObservations() {
-    // const connection = await this.dbService.getConnection();
+  // async initializeObservations() {
+    // const mapLocation = new MapLocation('Mansesteri', 61.497480, 23.757250);
+    // await this.dbService.mapLocationGateway.insert(mapLocation);
 
-    // const observationRepository = await connection.getRepository('observation') as Repository<Observation>;
-    // const observationTypeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
-    // const mapLocationRepository = await connection.getRepository('maplocation') as Repository<MapLocation>;
-
-    // if ((await observationRepository.count() > 0)) {
-    //   return;
-    // }
-
-    // const obsType = await observationTypeRepository.findOne();
-
-    // const observation = new Observation();
-    // observation.title = 'Testi';
-    // observation.description = 'Testi';
-    // observation.date = moment.default().format('YYYY-MM-DD HH:mm:ss');
-    // observation.type = obsType;
-
-    // const mapLocation = new MapLocation();
-    // mapLocation.name = 'Mansesteri';
-    // mapLocation.latitude = 61.497480;
-    // mapLocation.longitude = 23.757250;
-    // mapLocation.observation = observation;
-
-    // await observationRepository.save(observation);
-    // await mapLocationRepository.save(mapLocation);
-  }
+    // const observation = new Observation('Testi', 'Testi', moment.default(), 'LANDSCAPE', mapLocation.id, null);
+    // await this.dbService.observationGateway.insert(observation);
+  // }
 
   setLanguage(lang: string) {
     this.translateService.use(lang);

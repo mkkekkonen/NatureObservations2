@@ -15,7 +15,7 @@ export class MigrationRunnerService {
   constructor(private sqlite: SQLite) { }
 
   runMigrations = async () => {
-    const db = await this.sqlite.create({ name: 'nobs2.db', location: 'default' });
+    const db = await this.sqlite.create({ name: 'nobs2.sqlite', location: 'default' });
     const adapter = new CordovaSqliteAdapter(db);
 
     let runAllMigrations = false;
@@ -33,20 +33,27 @@ export class MigrationRunnerService {
 
     if (runAllMigrations) {
       migrations.forEach(migration => migration.forwards(adapter));
-      if (res.rows.length === 0) {
+      if (!res || res.rows.length === 0) {
         await adapter.executeSql('INSERT INTO lastMigration (lastMigrationId) VALUES (?)', [_.last(migrations).id]);
       }
     } else if (res.rows.length > 0) {
-      const lastId = res.rows.item(res.rows.length - 1).id;
-      const lastIndex = migrations.findIndex(migration => migration.id === lastId);
+      const lastEntry = res.rows.item(res.rows.length - 1);
+      const lastIndex = migrations.findIndex(migration => migration.id === lastEntry.lastMigrationId);
       if (lastIndex !== -1) {
-        migrations.slice(lastIndex + 1).forEach(migration => migration.forwards(adapter));
+        const migrationsToRun = migrations.slice(lastIndex + 1);
+        for (const migration of migrationsToRun) {
+          await migration.forwards(adapter);
+        }
+        await adapter.executeSql(
+          'UPDATE lastMigration SET lastMigrationId = ? WHERE id = ?',
+          [_.last(migrations).id, lastEntry.id],
+        );
       }
     }
   }
 
   reverseMigrations = async () => {
-    const db = await this.sqlite.create({ name: 'nobs2.db', location: 'default' });
+    const db = await this.sqlite.create({ name: 'nobs2.sqlite', location: 'default' });
     const adapter = new CordovaSqliteAdapter(db);
 
     let res;
@@ -67,7 +74,7 @@ export class MigrationRunnerService {
 
     const lastIndex = migrations.findIndex(migration => migration.id === lastId);
     for (let i = lastIndex; i >= 0; i--) {
-      migrations[i].backwards(adapter);
+      await migrations[i].backwards(adapter);
     }
   }
 }

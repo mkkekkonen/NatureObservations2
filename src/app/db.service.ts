@@ -1,37 +1,83 @@
 import { Injectable } from '@angular/core';
 
-import 'reflect-metadata';
-import { createConnection, getConnection } from 'typeorm';
+import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 
-import { Observation, ObservationType, MapLocation, ImgData } from './models';
+import {
+  ObservationGateway,
+  ObservationTypeGateway,
+  MapLocationGateway,
+  ImgDataGateway,
+} from './db/gateways';
+import { CordovaSqliteAdapter } from './db/adapters';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DbService {
-  constructor() { }
+  private dbAdapter: CordovaSqliteAdapter;
 
-  // public async getConnection() {
-  //   try {
-  //     return await getConnection();
-  //   } catch(e) {
-  //     return await this.createConn();
-  //   }
-  // }
+  private _observationGateway: ObservationGateway;
 
-  // createConn() {
-  //   return createConnection({
-  //     type: 'cordova',
-  //     database: 'nobs',
-  //     location: 'default',
-  //     synchronize: true,
-  //     logging: 'all',
-  //     entities: [
-  //       Observation,
-  //       ObservationType,
-  //       MapLocation,
-  //       ImgData,
-  //     ],
-  //   });
-  // }
+  private _observationTypeGateway: ObservationTypeGateway;
+
+  private _mapLocationGateway: MapLocationGateway;
+
+  private _imgDataGateway: ImgDataGateway;
+
+  constructor(private sqlite: SQLite) {
+    this.setupAdapter();
+  }
+
+  setupAdapter = async () => {
+    const db = await this.sqlite.create({
+      name: 'nobs2.sqlite',
+      location: 'default',
+    });
+
+    this.dbAdapter = new CordovaSqliteAdapter(db);
+  }
+
+  get observationGateway() {
+    if (!this.dbAdapter) {
+      throw new Error('Adapter not ready');
+    }
+
+    if (!this._observationGateway) {
+      this._observationGateway = new ObservationGateway(this.dbAdapter);
+    }
+    return this._observationGateway;
+  }
+
+  get observationTypeGateway() {
+    if (!this.dbAdapter) {
+      throw new Error('Adapter not ready');
+    }
+
+    if (!this._observationTypeGateway) {
+      this._observationTypeGateway = new ObservationTypeGateway(this.dbAdapter);
+    }
+    return this._observationTypeGateway;
+  }
+
+  get mapLocationGateway() {
+    if (!this.dbAdapter) {
+      throw new Error('Adapter not ready');
+    }
+
+    if (!this._mapLocationGateway) {
+      this._mapLocationGateway = new MapLocationGateway(this.dbAdapter);
+    }
+    return this._mapLocationGateway;
+  }
+
+  get imgDataGateway() {
+    if (!this.dbAdapter) {
+      throw new Error('Adapter not ready');
+    }
+
+    if (!this._imgDataGateway) {
+      this._imgDataGateway = new ImgDataGateway(this.dbAdapter);
+    }
+    return this._imgDataGateway;
+  }
 }
