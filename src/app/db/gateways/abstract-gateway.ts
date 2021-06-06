@@ -50,7 +50,7 @@ export abstract class AbstractGateway<T extends IModel> {
 
   abstract getValueNames: () => string[];
 
-  abstract validateValues: (data: any[]) => void;
+  abstract getValidationArray: () => any[];
 
   abstract getObjectFromRowData: (row: any) => T;
 
@@ -126,4 +126,26 @@ export abstract class AbstractGateway<T extends IModel> {
   private sqlGetLastId = () => this.db.executeSql(
     getFetchLastIdClause(this.getTableName())
   )
+
+  validateValues = (data: any[]) => {
+    if (data.length !== this.getPlaceholderCount()) {
+      throw new Error('Invalid data');
+    }
+
+    const validationArray = _.zip(this.getValueNames(), data, this.getValidationArray());
+
+    for (let entry of validationArray) {
+      const [valueName, value, validator] = entry;
+
+      if (typeof validator === 'function') {
+        if (!validator(value)) {
+          throw new Error(`Invalid ${valueName}: ${value}`);
+        }
+      } else {
+        if (typeof value !== validator) {
+          throw new Error(`Invalid ${valueName}: ${value}`);
+        }
+      }
+    }
+  }
 }

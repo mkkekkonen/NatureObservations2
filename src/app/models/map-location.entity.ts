@@ -9,10 +9,13 @@ export class MapLocation {
   name: string | null;
 
   coords: ICoords
+
+  observationId: number;
   
-  constructor(name: string | null, latitude: number, longitude: number, id?: number) {
+  constructor(name: string | null, latitude: number, longitude: number, observationId: number, id?: number) {
     this.id = id;
     this.name = name;
     this.coords = { latitude, longitude };
+    this.observationId = observationId;
   }
 }

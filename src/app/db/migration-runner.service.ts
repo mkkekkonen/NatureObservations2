@@ -32,7 +32,14 @@ export class MigrationRunnerService {
     }
 
     if (runAllMigrations) {
-      migrations.forEach(migration => migration.forwards(adapter));
+      try {
+        migrations.forEach(migration => migration.forwards(adapter));
+      } catch (e) {
+        console.error(`Error running migrations: ${e.message}`);
+        console.error('Aborting');
+        return;
+      }
+
       if (!res || res.rows.length === 0) {
         await adapter.executeSql('INSERT INTO lastMigration (lastMigrationId) VALUES (?)', [_.last(migrations).id]);
       }
@@ -41,9 +48,17 @@ export class MigrationRunnerService {
       const lastIndex = migrations.findIndex(migration => migration.id === lastEntry.lastMigrationId);
       if (lastIndex !== -1) {
         const migrationsToRun = migrations.slice(lastIndex + 1);
-        for (const migration of migrationsToRun) {
-          await migration.forwards(adapter);
+
+        try {
+          for (const migration of migrationsToRun) {
+            await migration.forwards(adapter);
+          }
+        } catch (e) {
+          console.error(`Error running migrations: ${e.message}`);
+          console.error('Aborting');
+          return;
         }
+
         await adapter.executeSql(
           'UPDATE lastMigration SET lastMigrationId = ? WHERE id = ?',
           [_.last(migrations).id, lastEntry.id],

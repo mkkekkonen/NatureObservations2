@@ -9,31 +9,17 @@ const getData = (obj: ImgData) => [obj.fileUri, obj.debugDataUri];
 const getObj = (row: any) => new ImgData(row.id, row.fileUri, row.debugDataUri);
 
 export class ImgDataGateway extends AbstractGateway<ImgData> {
-  validationArray = ['string', 'string'];
+  getValidationArray = () => [
+    'string',
+    (data: any) => (typeof data === 'string') || data === null,
+    'number',
+  ];
 
   getTableName = (): TableName => 'imgData';
 
-  getValueNames = () => ['fileUri', 'debugDataUri'];
+  getValueNames = () => ['fileUri', 'debugDataUri', 'observationId'];
 
-  validateValues = (data: any[]) => {
-    if (data.length !== this.getPlaceholderCount()) {
-      throw new Error('Invalid data');
-    }
+  getValues = (obj: ImgData) => [obj.fileUri, obj.debugDataUri, obj.observationId];
 
-    const validationArray = _.zip(this.getValueNames(), data, this.validationArray);
-
-    for (let i = 0; i < validationArray.length; i++) {
-      const entry = validationArray[i];
-
-      const [valueName, value, validator] = entry;
-
-      if (typeof value !== validator) {
-        throw new Error(`Invalid ${valueName}: ${value}`)
-      }
-    }
-  }
-
-  getValues = (obj: ImgData) => [obj.fileUri, obj.debugDataUri];
-
-  getObjectFromRowData = (data: any) => new ImgData(data.fileUri, data.debugDataUri, data.id);
+  getObjectFromRowData = (data: any) => new ImgData(data.fileUri, data.debugDataUri, data.observationId, data.id);
 }

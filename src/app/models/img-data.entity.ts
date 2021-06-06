@@ -5,9 +5,12 @@ export class ImgData {
 
   debugDataUri: string;
 
-  constructor(fileUri: string, debugDataUri: string, id?: number) {
+  observationId: number;
+
+  constructor(fileUri: string, debugDataUri: string, observationId: number, id?: number) {
     this.id = id;
     this.fileUri = fileUri;
     this.debugDataUri = debugDataUri;
+    this.observationId = observationId;
   }
 }

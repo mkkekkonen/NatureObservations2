@@ -34,9 +34,9 @@ const migration: IMigration = {
 
     const observationsSql = 'SELECT * FROM observation';
     const observationsResult = await adapter.executeSql(observationsSql);
-    const observations = adapter.getRowsFromResult(observationsResult);
+    const observations: IObservationOld[] = adapter.getRowsFromResult(observationsResult);
 
-    const observationValues = observations.map((obs: IObservationOld) => `(${w(obs.title)}, ${w(obs.description)}, ${w(obs.date)}, ${w(typeMapper(obs.typeId))}, ${obs.mapLocationId || 'NULL'}, ${obs.imgDataId || 'NULL'})`)
+    const observationValues = observations.map((obs) => `(${w(obs.title)}, ${w(obs.description)}, ${w(obs.date)}, ${w(typeMapper(obs.typeId))}, ${obs.mapLocationId || 'NULL'}, ${obs.imgDataId || 'NULL'})`)
       .join(', ');
 
     const sql = [];

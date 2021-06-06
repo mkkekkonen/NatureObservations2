@@ -32,3 +32,4 @@ npm-debug.log*
 src/app/secrets.json
 test.sqlite
 mig2.sqlite
+testdb/mig*
