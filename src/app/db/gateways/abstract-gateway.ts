@@ -34,6 +34,9 @@ export const getFetchAllClause = (tableName: TableName) => `SELECT * FROM ${tabl
 export const getFetchOneClause = (tableName: TableName) =>
   `SELECT * FROM ${tableName} WHERE id = ?`;
 
+export const getDeleteOneClause = (tableName: TableName) =>
+  `DELETE FROM ${tableName} WHERE id = ?`;
+
 export const getFetchLastIdClause = (tableName: TableName) =>
   `SELECT id FROM ${tableName} ORDER BY id DESC LIMIT 1`;
 
@@ -90,6 +93,10 @@ export abstract class AbstractGateway<T extends IModel> {
     }
   }
 
+  delete = async (id: number) => {
+    await this.sqlDelete(id);
+  }
+
   getLastId = async () => {
     const res = await this.sqlGetLastId();
     return this.db.getLastIdFromResult(res);
@@ -122,6 +129,11 @@ export abstract class AbstractGateway<T extends IModel> {
     getFetchOneClause(this.getTableName()),
     [id],
   )
+
+  private sqlDelete = (id: number) => this.db.executeSql(
+    getDeleteOneClause(this.getTableName()),
+    [id],
+  );
 
   private sqlGetLastId = () => this.db.executeSql(
     getFetchLastIdClause(this.getTableName())

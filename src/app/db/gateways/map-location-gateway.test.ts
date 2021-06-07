@@ -95,5 +95,12 @@ describe('MapLocation', () => {
       const obj = await gateway.getById(1);
       expect(obj).toEqual(new MapLocation('Hallila', 12.3456, 78.9012, 1, 1));
     });
+
+    it('deletes the map location by ID', async () => {
+      await gateway.delete(1);
+      
+      const all = await gateway.getAll();
+      expect(all.length).toEqual(0);
+    });
   });
 });

@@ -4,6 +4,8 @@ import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 
 import _, { last } from 'lodash';
 
+import { DB_FILE_NAME } from '../constants';
+
 import { migrations } from './migrations/migrations';
 import { CordovaSqliteAdapter } from './adapters/cordova-sqlite-adapter';
 
@@ -15,7 +17,7 @@ export class MigrationRunnerService {
   constructor(private sqlite: SQLite) { }
 
   runMigrations = async () => {
-    const db = await this.sqlite.create({ name: 'nobs2.sqlite', location: 'default' });
+    const db = await this.sqlite.create({ name: DB_FILE_NAME, location: 'default' });
     const adapter = new CordovaSqliteAdapter(db);
 
     let runAllMigrations = false;

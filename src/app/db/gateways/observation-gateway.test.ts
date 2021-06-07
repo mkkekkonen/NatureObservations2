@@ -98,5 +98,12 @@ describe('Observation', () => {
       expect(obj.date.isSame(moment('2021-05-27'))).toBe(true);
       expect(obj.type).toEqual('PLANT');
     });
+
+    it('deletes the observation by ID', async () => {
+      await gateway.delete(1);
+
+      const all = await gateway.getAll();
+      expect(all.length).toEqual(0);
+    });
   });
 });

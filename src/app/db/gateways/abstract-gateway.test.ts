@@ -3,6 +3,7 @@ import {
   getUpdateClause,
   getFetchAllClause,
   getFetchOneClause,
+  getDeleteOneClause,
   getFetchLastIdClause,
 } from './abstract-gateway';
 
@@ -30,9 +31,14 @@ describe('clause functions', () => {
 
   it('correctly generates fetch one clause', () => {
     const tableName = 'observation';
-    const id = 21;
     expect(getFetchOneClause(tableName))
       .toEqual('SELECT * FROM observation WHERE id = ?');
+  });
+
+  it('correctly generates delete one clause', () => {
+    const tableName = 'observation';
+    expect(getDeleteOneClause(tableName))
+      .toEqual('DELETE FROM observation WHERE id = ?');
   });
 
   it('correctly generates fetch last ID clause', () => {

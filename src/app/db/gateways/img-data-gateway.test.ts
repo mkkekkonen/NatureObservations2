@@ -69,7 +69,7 @@ describe('ImgData', () => {
       const obj = new ImgData('file:///foo/bar', null, 1, 1);
       await gateway.update(obj);
 
-      const all = await gateway.getAll()
+      const all = await gateway.getAll();
       expect(all.length).toEqual(1);
 
       const [fromDb] = all;
@@ -80,6 +80,13 @@ describe('ImgData', () => {
     it('gets image data by ID', async () => {
       const obj = await gateway.getById(1);
       expect(obj).toEqual(new ImgData('file:///foo/bar', null, 1, 1));
+    });
+
+    it('deletes image data by ID', async () => {
+      await gateway.delete(1);
+
+      const all = await gateway.getAll();
+      expect(all.length).toEqual(0);
     });
   });
 });

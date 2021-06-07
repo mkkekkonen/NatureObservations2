@@ -9,6 +9,7 @@ import {
   ImgDataGateway,
 } from './db/gateways';
 import { CordovaSqliteAdapter } from './db/adapters';
+import { DB_FILE_NAME } from './constants';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,7 @@ export class DbService {
 
   setupAdapter = async () => {
     const db = await this.sqlite.create({
-      name: 'nobs2.sqlite',
+      name: DB_FILE_NAME,
       location: 'default',
     });
 

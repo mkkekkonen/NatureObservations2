@@ -62,7 +62,7 @@ export class AppComponent {
     await this.migrationRunnerService.runMigrations();
 
     await this.initializeObservationTypes();
-    // await this.initializeObservations();
+    await this.initializeObservations();
   }
 
   async initializeObservationTypes() {
@@ -75,13 +75,17 @@ export class AppComponent {
     }
   }
 
-  // async initializeObservations() {
-    // const mapLocation = new MapLocation('Mansesteri', 61.497480, 23.757250);
-    // await this.dbService.mapLocationGateway.insert(mapLocation);
+  async initializeObservations() {
+    const existingObservations = await this.dbService.observationGateway.getAll()
 
-    // const observation = new Observation('Testi', 'Testi', moment.default(), 'LANDSCAPE', mapLocation.id, null);
-    // await this.dbService.observationGateway.insert(observation);
-  // }
+    if (existingObservations.length === 0) {
+      const observation = new Observation('Testi', 'Testi', moment.default(), 'LANDSCAPE');
+      await this.dbService.observationGateway.insert(observation);
+      
+      const mapLocation = new MapLocation('Mansesteri', 61.497480, 23.757250, observation.id);
+      await this.dbService.mapLocationGateway.insert(mapLocation);
+    }
+  }
 
   setLanguage(lang: string) {
     this.translateService.use(lang);
