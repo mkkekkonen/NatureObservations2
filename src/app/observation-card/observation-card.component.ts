@@ -41,11 +41,9 @@ export class ObservationCardComponent implements OnInit {
     return null;
   }
 
-  // TODO: select where -metodit
   async getImgData() {
     try {
-      const allImgData = await this.dbService.imgDataGateway.getAll();
-      this.imgData = allImgData.find(imgData => imgData.observationId === this.observation.id) || null;
+      this.imgData = await this.dbService.imgDataGateway.getByObservationId(this.observation.id);
     } catch (e) {
       window.alert(`Error loading image data: ${e.message}`);
     }
@@ -53,8 +51,7 @@ export class ObservationCardComponent implements OnInit {
 
   async getMapLocation() {
     try {
-      const allMapLocations = await this.dbService.mapLocationGateway.getAll();
-      this.mapLocation = allMapLocations.find(mapLocation => mapLocation.observationId === this.observation.id);
+      this.mapLocation = await this.dbService.mapLocationGateway.getByObservationId(this.observation.id);
     } catch (e) {
       window.alert(`Error loading map locations: ${e.message}`);
     }

@@ -81,7 +81,7 @@ describe('MapLocation', () => {
     });
 
     it('updates the map location', async () => {
-      const obj = new MapLocation('Hallila', 12.3456, 78.9012, 1, 1);
+      const obj = new MapLocation('Hallila', 12.3456, 78.9012, 2, 1);
       await gateway.update(obj);
 
       const all = await gateway.getAll();
@@ -93,7 +93,12 @@ describe('MapLocation', () => {
 
     it('gets the map location by ID', async () => {
       const obj = await gateway.getById(1);
-      expect(obj).toEqual(new MapLocation('Hallila', 12.3456, 78.9012, 1, 1));
+      expect(obj).toEqual(new MapLocation('Hallila', 12.3456, 78.9012, 2, 1));
+    });
+
+    it('gets the map location by observation ID', async () => {
+      const obj = await gateway.getByObservationId(2);
+      expect(obj).toEqual(new MapLocation('Hallila', 12.3456, 78.9012, 2, 1));
     });
 
     it('deletes the map location by ID', async () => {

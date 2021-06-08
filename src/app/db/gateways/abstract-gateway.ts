@@ -2,7 +2,7 @@ import { AbstractDbAdapter } from '../adapters/abstract-db-adapter';
 
 import _ from 'lodash';
 
-interface IModel {
+export interface IModel {
   id?: number
 }
 

@@ -2,9 +2,10 @@ import _ from 'lodash';
 
 import { MapLocation } from '../../models/map-location.entity';
 
-import { AbstractGateway, TableName } from './abstract-gateway';
+import { TableName } from './abstract-gateway';
+import { AbstractObservationDataGateway } from './abstract-observation-data-gateway';
 
-export class MapLocationGateway extends AbstractGateway<MapLocation> {
+export class MapLocationGateway extends AbstractObservationDataGateway<MapLocation> {
   getValidationArray = () => [
     (data: any) => data === null || typeof data === 'string',
     'number',
