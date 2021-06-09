@@ -11,10 +11,18 @@
     </ion-button>
 
     <div [hidden]="!searchCriteriaOpen" class="search-sort-criteria">
+      <ion-item-divider>
+        <ion-label>{{ 'MYOBS.WORDSEARCH' | translate }}</ion-label>
+      </ion-item-divider>
+
       <ion-item>
         <ion-label position="stacked">{{ 'MYOBS.SEARCHWORD' | translate }}</ion-label>
         <ion-input [(ngModel)]="searchString"></ion-input>
       </ion-item>
+
+      <ion-item-divider>
+        <ion-label>{{ 'MYOBS.TYPE' | translate }}</ion-label>
+      </ion-item-divider>
 
       <ion-item *ngIf="searchObservationType">
         <app-observation-type-entry *ngIf="searchObservationType" [observationType]="searchObservationType"></app-observation-type-entry>
@@ -28,6 +36,10 @@
           {{ 'MYOBS.NOTYPE' | translate }}
         </ion-button>
       </ion-item>
+
+      <ion-item-divider>
+        <ion-label>{{ 'MYOBS.DATE' | translate }}</ion-label>
+      </ion-item-divider>
 
       <ion-item>
         <ion-label position="stacked">{{ 'MYOBS.STARTDATE' | translate }}</ion-label>

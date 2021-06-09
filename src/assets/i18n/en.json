@@ -76,7 +76,8 @@
     "TITLE": "Otsikko",
     "TYPE": "Tyyppi",
     "NOTYPE": "Clear type",
-    "SEARCHWORD": "Search"
+    "SEARCHWORD": "Search",
+    "WORDSEARCH": "Word Search"
   },
   "OBSTYPE": {
     "LANDSCAPE": "Landscape",

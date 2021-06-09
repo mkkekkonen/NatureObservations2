@@ -76,7 +76,8 @@
     "TITLE": "Otsikko",
     "TYPE": "Tyyppi",
     "NOTYPE": "Ei tyyppiä",
-    "SEARCHWORD": "Sanahaku"
+    "SEARCHWORD": "Hakusana",
+    "WORDSEARCH": "Sanahaku"
   },
   "OBSTYPE": {
     "LANDSCAPE": "Maisema",
