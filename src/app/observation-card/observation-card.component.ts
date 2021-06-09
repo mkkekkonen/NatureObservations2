@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import * as moment from 'moment';
 
-import { Observation, ImgData, MapLocation } from '../models';
+import { Observation, ImgData, MapLocation, ObservationType } from '../models';
 import { DebugService } from '../debug.service';
 import { DbService } from '../db.service';
 
@@ -18,6 +18,7 @@ export class ObservationCardComponent implements OnInit {
 
   imgData: ImgData;
   mapLocation: MapLocation;
+  observationType: ObservationType;
 
   constructor(
     private router: Router,
@@ -26,6 +27,7 @@ export class ObservationCardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.getObservationType();
     this.getImgData();
     this.getMapLocation();
   }
@@ -53,7 +55,16 @@ export class ObservationCardComponent implements OnInit {
     try {
       this.mapLocation = await this.dbService.mapLocationGateway.getByObservationId(this.observation.id);
     } catch (e) {
-      window.alert(`Error loading map locations: ${e.message}`);
+      window.alert(`Error loading map location: ${e.message}`);
+    }
+  }
+
+  async getObservationType() {
+    try {
+      const types = await this.dbService.observationTypeGateway.getAll();
+      this.observationType = types.find(type => type.name === this.observation.type) || null;
+    } catch (e) {
+      window.alert(`Error loading observation type: ${e.message}`);
     }
   }
 
