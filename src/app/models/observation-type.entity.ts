@@ -1,3 +1,5 @@
+import emojis from '../../assets/json/observation-type-emojis';
+
 export class ObservationType {
   id: number;
 
@@ -17,5 +19,10 @@ export class ObservationType {
 
   get imageUrl() {
     return `assets/icons/${this.imageFileName}`;
+  }
+
+  get emoji() {
+    const entry = emojis.find(entry => entry.name === this.name);
+    return entry ? entry.emoji : null;
   }
 }

@@ -3,58 +3,58 @@ import * as names from './observation-type-names';
 export default [
   {
     name: names.LANDSCAPE,
-    icon: 'landscape.svg',
+    emoji: '🏞️',
   },
   {
     name: names.BIRD,
-    icon: 'bird.svg',
+    emoji: '🐦'
   },
   {
     name: names.MAMMAL,
-    icon: 'mammal.svg',
+    emoji: '🐰'
   },
   {
     name: names.FISH,
-    icon: 'fish.svg',
+    emoji: '🐟'
   },
   {
     name: names.REPTAMPH,
-    icon: 'reptileamphibian.svg',
+    emoji: '🐸'
   },
   {
     name: names.BUTTERFLY,
-    icon: 'butterfly.svg',
+    emoji: '🦋'
   },
   {
     name: names.INSECT,
-    icon: 'insect.svg',
+    emoji: '🐜'
   },
   {
     name: names.ARACHNID,
-    icon: 'insect.svg',
+    emoji: '🕷️',
   },
   {
     name: names.FLOWER,
-    icon: 'plant.svg',
+    emoji: '🌼',
   },
   {
     name: names.PLANT,
-    icon: 'plant.svg',
+    emoji: '🌿'
   },
   {
     name: names.TREE,
-    icon: 'plant.svg',
+    emoji: '🌳'
   },
   {
     name: names.MUSHROOM,
-    icon: 'mushroom.svg',
+    emoji: '🍄'
   },
   {
     name: names.WEATHER,
-    icon: 'weather.svg',
+    emoji: '🌤️'
   },
   {
     name: names.OTHER,
-    icon: 'other.svg',
-  },
+    emoji: '❓'
+  }
 ];

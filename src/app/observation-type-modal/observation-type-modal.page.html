@@ -1,11 +1,12 @@
 <app-nobs-header [text]="'NEWOBS.SELECTTYPE' | translate"></app-nobs-header>
 
 <ion-content>
-  <ion-list>
+  <ion-list class="list">
     <ion-radio-group [(ngModel)]="selectedTypeName">
       <ion-item *ngFor="let observationType of observationTypes">
         <ion-avatar slot="start">
-          <img [src]="observationType.imageUrl" />
+          <!-- <img [src]="observationType.imageUrl" /> -->
+          <span class="avatar">{{ observationType.emoji }}</span>
         </ion-avatar>
       <ion-label>{{ observationType.translationKey | translate }}</ion-label>
       <ion-radio slot="end" [value]="observationType.name"></ion-radio>

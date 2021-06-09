@@ -89,6 +89,9 @@
     "PLANT": "Plant",
     "MUSHROOM": "Mushroom",
     "WEATHER": "Weather",
+    "ARACHNID": "Arachnid",
+    "FLOWER": "Flower",
+    "TREE": "Tree",
     "OTHER": "Other"
   },
   "ERROR": {

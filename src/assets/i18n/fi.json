@@ -89,6 +89,9 @@
     "PLANT": "Kasvi",
     "MUSHROOM": "Sieni",
     "WEATHER": "Sää",
+    "ARACHNID": "Hämähäkkieläin",
+    "FLOWER": "Kukka",
+    "TREE": "Puu",
     "OTHER": "Muu"
   },
   "ERROR": {
