@@ -61,8 +61,7 @@ export class ObservationCardComponent implements OnInit {
 
   async getObservationType() {
     try {
-      const types = await this.dbService.observationTypeGateway.getAll();
-      this.observationType = types.find(type => type.name === this.observation.type) || null;
+      this.observationType = await this.dbService.observationTypeGateway.getByTypeName(this.observation.type);
     } catch (e) {
       window.alert(`Error loading observation type: ${e.message}`);
     }
