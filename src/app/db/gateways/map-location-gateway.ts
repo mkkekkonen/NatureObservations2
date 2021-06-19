@@ -5,6 +5,8 @@ import { MapLocation } from '../../models/map-location.entity';
 import { TableName } from './abstract-gateway';
 import { AbstractObservationDataGateway } from './abstract-observation-data-gateway';
 
+export const valueNames = ['name', 'latitude', 'longitude', 'observationId'];
+
 export class MapLocationGateway extends AbstractObservationDataGateway<MapLocation> {
   getValidationArray = () => [
     (data: any) => data === null || typeof data === 'string',
@@ -15,7 +17,7 @@ export class MapLocationGateway extends AbstractObservationDataGateway<MapLocati
 
   getTableName = (): TableName => 'mapLocation';
 
-  getValueNames = () => ['name', 'latitude', 'longitude', 'observationId'];
+  getValueNames = () => valueNames;
 
   getValues = (obj: MapLocation) => [obj.name, obj.coords.latitude, obj.coords.longitude, obj.observationId];
 

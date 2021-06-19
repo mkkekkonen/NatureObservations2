@@ -4,7 +4,8 @@ import _ from 'lodash';
 import { Observation } from '../../models/observation.entity';
 
 import { AbstractGateway, TableName } from './abstract-gateway';
-import { ObservationTypeGateway, MapLocationGateway, ImgDataGateway } from '.';
+
+export const valueNames = ['title', 'description', 'date', 'type'];
 
 const isNumberOrNull = (data: any) => data === null || !isNaN(data);
 
@@ -18,7 +19,7 @@ export class ObservationGateway extends AbstractGateway<Observation> {
 
   getTableName = (): TableName => 'observation';
 
-  getValueNames = () => ['title', 'description', 'date', 'type'];
+  getValueNames = () => valueNames;
 
   getValues = (obj: Observation) => [obj.title, obj.description, obj.date.format(Observation.dateFormat), obj.type];
 

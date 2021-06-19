@@ -3,17 +3,19 @@ import fs from 'fs';
 import { Database } from 'sql.js';
 import _ from 'lodash';
 
-import { AbstractDbAdapter } from './abstract-db-adapter';
+import { AbstractDbAdapter, GetValuesFn, EditContextFn } from './abstract-db-adapter';
 
 export class SqlJsAdapter extends AbstractDbAdapter {
   constructor(db?: Database) {
     super(db);
   }
 
-  private getDb = () => (this.database as Database);
+  private get db() {
+    return this.database as Database;
+  }
 
   executeSql = (sql: string, values?: any[]) => {
-    return Promise.resolve(this.getDb().exec(sql, values));
+    return Promise.resolve(this.db.exec(sql, values));
   }
 
   /* 
@@ -25,12 +27,25 @@ export class SqlJsAdapter extends AbstractDbAdapter {
   executeTransaction = (sql: string[], values?: any[][]) => {
     return Promise.resolve(_.zip(sql, values || []).map(entry => {
       const [sqlRow, rowValues] = entry;
-      return this.getDb().exec(sqlRow, rowValues);
+      return this.db.exec(sqlRow, rowValues);
     }));
   }
 
+  executeTransactionWithContext = (sql: string[], getValuesFns?: GetValuesFn[], editContextFns?: EditContextFn[]) => {
+    const context = {};
+    return Promise.resolve(
+      _.zip(sql, getValuesFns || [], editContextFns || [])
+        .map((entry) => {
+          const [sqlRow, getValues, editContext] = entry;
+          const res = this.db.exec(sqlRow, getValues(context));
+          const resultObj = this.getRowsFromResult(res);
+          editContext(resultObj, context);
+        }),
+    );
+  }
+
   writeDatabase = (filename: string = 'testDb.sqlite') => {
-    const data = this.getDb().export();
+    const data = this.db.export();
     const buf = Buffer.from(data);
     fs.writeFileSync(filename, buf);
   }

@@ -5,6 +5,8 @@ import { ImgData } from '../../models/img-data.entity';
 import { TableName } from './abstract-gateway';
 import { AbstractObservationDataGateway } from './abstract-observation-data-gateway';
 
+export const valueNames = ['fileUri', 'debugDataUri', 'observationId'];
+
 export class ImgDataGateway extends AbstractObservationDataGateway<ImgData> {
   getValidationArray = () => [
     'string',
@@ -14,7 +16,7 @@ export class ImgDataGateway extends AbstractObservationDataGateway<ImgData> {
 
   getTableName = (): TableName => 'imgData';
 
-  getValueNames = () => ['fileUri', 'debugDataUri', 'observationId'];
+  getValueNames = () => valueNames;
 
   getValues = (obj: ImgData) => [obj.fileUri, obj.debugDataUri, obj.observationId];
 

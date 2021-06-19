@@ -3,6 +3,10 @@ import { Database as SqlJsDatabase } from 'sql.js';
 
 type DatabaseType = CordovaSqliteObject | SqlJsDatabase;
 
+export type GetValuesFn = (ctx: any) => any[];
+
+export type EditContextFn = (res: any, ctx: any) => void;
+
 export abstract class AbstractDbAdapter {
   database?: DatabaseType;
 
@@ -13,6 +17,8 @@ export abstract class AbstractDbAdapter {
   abstract executeSql: (sql: string, values?: any[]) => Promise<any>;
 
   abstract executeTransaction: (sql: string[], values?: any[][]) => Promise<any>;
+
+  abstract executeTransactionWithContext: (sql: string[], getValues?: GetValuesFn[], editContext?: EditContextFn[]) => Promise<any>;
 
   abstract getNumberOfResultRows: (res: any) => number;
 
