@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 
 // import { Repository } from 'typeorm';
 import { TranslateService } from '@ngx-translate/core';
@@ -54,6 +54,7 @@ export class MyObservationsPage implements OnInit {
     private translateService: TranslateService,
     private dbService: DbService,
     private searchSortService: SearchSortService,
+    private platform: Platform,
   ) {
     this.deleteObservation = this.deleteObservation.bind(this);
     this.loadObservations = this.loadObservations.bind(this);
@@ -63,7 +64,7 @@ export class MyObservationsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.loadObservations();
+    this.platform.ready().then(() => this.loadObservations());
   }
 
   get searchIcon() {

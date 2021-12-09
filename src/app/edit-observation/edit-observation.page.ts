@@ -19,6 +19,7 @@ import { ObservationTypeModalPage } from '../observation-type-modal/observation-
 import { MapModalPage } from '../map-modal/map-modal.page';
 import { DebugService } from '../debug.service';
 import { DbService } from '../db.service';
+import { TransactionScriptRunnerService } from '../db/transaction-script-runner.service';
 import { thunderforestApiKey } from '../secrets.json';
 
 const componentDateFormat = 'YYYY-MM-DDTHH:mm:ss';
@@ -30,7 +31,11 @@ const componentDateFormat = 'YYYY-MM-DDTHH:mm:ss';
 })
 export class EditObservationPage implements OnInit {
   observation$: Observable<Observation>;
-  observation = new Observation();
+
+  observation: Observation;
+  imgData: ImgData;
+  mapLocation: MapLocation;
+
   time = moment.default().format(componentDateFormat);
 
   cameraOptions: CameraOptions;
@@ -52,6 +57,7 @@ export class EditObservationPage implements OnInit {
     private router: Router,
     private debugService: DebugService,
     private dbService: DbService,
+    private transactionScriptRunner: TransactionScriptRunnerService,
   ) {
     const commonCameraOptions: CameraOptions = {
       quality: 100,
@@ -80,40 +86,52 @@ export class EditObservationPage implements OnInit {
           return undefined;
         }
 
-        const connection = await this.dbService.getConnection();
-        const observationRepository = connection.getRepository('observation') as Repository<Observation>;
         try {
-          const observations = await observationRepository.find({ where: { id: observationId }, relations: ['imgData', 'mapLocation', 'type'] });
-          if (observations.length > 0) {
-            const [first] = observations;
-            return first;
-          }
-        } catch(e) {
+          const observation = await this.dbService.observationGateway.getById(observationId);
+          return observation;
+        } catch (e) {
           window.alert(`Error fetching observation: ${e.message}`);
         }
       })
     );
 
     this.observation$.subscribe({
-      next: (observation) => {
-        if (observation) {
-          this.observation = observation;
-        }
+      next: async (observation) => {
+        this.observation = observation || new Observation();
 
-        this.platform.ready().then(() => {
-          this.initLeafletMap();
-        });
+        if (observation) {
+          if (this.observation.imgDataId) {
+            try {
+              this.imgData = await this.dbService.imgDataGateway.getById(this.observation.imgDataId);
+            } catch (e) {
+              window.alert(`Error fetching image data: ${e.message}`);
+            }
+          }
+          if (this.observation.mapLocationId) {
+            try {
+              this.mapLocation = await this.dbService.mapLocationGateway.getById(this.observation.mapLocationId);
+            } catch (e) {
+              window.alert(`Error fetching map location: ${e.message}`);
+            }
+          }
+        }
       },
     });
   }
 
+  ionViewDidEnter() {
+    this.platform.ready().then(() => {
+      this.initLeafletMap();
+    });
+  }
+
   get title() {
-    return this.observation.id ? 'NEWOBS.EDITOBS' : 'NEWOBS.NEWOBS';
+    return this.observation && this.observation.id ? 'NEWOBS.EDITOBS' : 'NEWOBS.NEWOBS';
   }
 
   get imageUrl() {
-    if (this.observation.imgData) {
-      return (window as any).Ionic.WebView.convertFileSrc(this.observation.imgData.fileUri);
+    if (this.imgData) {
+      return (window as any).Ionic.WebView.convertFileSrc(this.imgData.fileUri);
     }
 
     return undefined;
@@ -125,10 +143,8 @@ export class EditObservationPage implements OnInit {
     const imageUrl = await this.camera.getPicture(!usePhotoLibrary ? this.cameraOptions : this.photoLibraryOptions);
 
     try {
-      this.observation.imgData = new ImgData();
       const path = await this.filePath.resolveNativePath(`file://${imageUrl}`);
-      this.observation.imgData.fileUri = path;
-      this.observation.imgData.observation = this.observation;
+      this.imgData = new ImgData(path, null, null);
     } catch(e) {
       window.alert(e.message);
     }
@@ -175,7 +191,7 @@ export class EditObservationPage implements OnInit {
     L.tileLayer.provider('Thunderforest.Outdoors', { apikey: thunderforestApiKey }).addTo(this.map);
     setTimeout(() => {
       this.map.invalidateSize();
-    }, 1000);
+    }, 1500);
   }
 
   async openMapModal() {
@@ -184,9 +200,8 @@ export class EditObservationPage implements OnInit {
     });
     modal.onDidDismiss().then(event => {
       if (event.data && event.data.mapLocation) {
-        this.observation.mapLocation = event.data.mapLocation;
-        this.observation.mapLocation.observation = this.observation;
-        const { latitude, longitude } = this.observation.mapLocation;
+        this.mapLocation = event.data.mapLocation;
+        const { latitude, longitude } = this.mapLocation.coords;
         this.setLeafletMarkerAndPan(new L.LatLng(latitude, longitude));
       }
     });
@@ -219,28 +234,11 @@ export class EditObservationPage implements OnInit {
     }
 
     try {
-      const connection = await this.dbService.getConnection();
-
-      connection.transaction(async entityManager => {
-        this.observation.date = moment.default(this.time, componentDateFormat).format('YYYY-MM-DD HH:mm');
-        await entityManager.save(this.observation);
-
-        if (this.observation.imgData) {
-          if (!this.observation.imgData.id) {
-            await entityManager.delete(ImgData, { observation: this.observation });
-          }
-          await entityManager.save(this.observation.imgData);
-        }
-
-        if (this.observation.mapLocation) {
-          if (!this.observation.mapLocation.id) {
-            await entityManager.delete(MapLocation, { observation: this.observation });
-          }
-          await entityManager.save(this.observation.mapLocation);
-        }
-      });
+      if (this.observation && !this.observation.id) {
+        await this.transactionScriptRunner.saveNewObservation(this.observation, this.imgData, this.mapLocation);
+      }
     } catch(e) {
-      window.alert(`Virhe: ${e.message}`);
+      window.alert(`Error: ${e.message}`);
       return;
     }
 

@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 
+import { Platform } from '@ionic/angular';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 
 import {
@@ -15,7 +16,7 @@ import { DB_FILE_NAME } from './constants';
   providedIn: 'root'
 })
 export class DbService {
-  private dbAdapter: CordovaSqliteAdapter;
+  private _dbAdapter: CordovaSqliteAdapter;
 
   private _observationGateway: ObservationGateway;
 
@@ -25,8 +26,8 @@ export class DbService {
 
   private _imgDataGateway: ImgDataGateway;
 
-  constructor(private sqlite: SQLite) {
-    this.setupAdapter();
+  constructor(private sqlite: SQLite, private platform: Platform) {
+    this.platform.ready().then(() => this.setupAdapter());
   }
 
   setupAdapter = async () => {
@@ -35,7 +36,11 @@ export class DbService {
       location: 'default',
     });
 
-    this.dbAdapter = new CordovaSqliteAdapter(db);
+    this._dbAdapter = new CordovaSqliteAdapter(db);
+  }
+
+  get dbAdapter() {
+    return this._dbAdapter;
   }
 
   get observationGateway() {

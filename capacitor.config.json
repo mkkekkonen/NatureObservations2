@@ -6,6 +6,8 @@
   "webDir": "www",
   "cordova": {},
   "server": {
-    "hostname": "localhost"
+    "hostname": "localhost",
+    "url": "http://192.168.30.144:8100",
+    "cleartext": true
   }
 }

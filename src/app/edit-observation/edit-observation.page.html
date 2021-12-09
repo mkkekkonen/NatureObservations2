@@ -2,7 +2,7 @@
 
 <ion-content>
   <div class="image-container">
-    <div class="image-placeholder" *ngIf="!observation.imgData">
+    <div class="image-placeholder" *ngIf="!imgData">
       <ion-icon name="image"></ion-icon>
     </div>
     <img *ngIf="imageUrl" [src]="imageUrl" />
@@ -13,7 +13,7 @@
     <ion-button (click)="takePicture('photoLibrary')">{{ 'NEWOBS.FILE' | translate }}</ion-button>
   </div>
 
-  <ion-list>
+  <ion-list *ngIf="observation">
     <ion-list-header>
       <ion-label>{{ 'NEWOBS.DESCR' | translate }}</ion-label>
     </ion-list-header>
@@ -47,7 +47,7 @@
 
     <ion-list-header>{{ 'NEWOBS.LOCATION' | translate }}</ion-list-header>
 
-    <ion-item *ngIf="observation?.mapLocation?.name">{{ observation.mapLocation.name }}</ion-item>
+    <ion-item *ngIf="mapLocation?.name">{{ mapLocation.name }}</ion-item>
 
     <div ion-item>
       <div item-content #map id="map"></div>

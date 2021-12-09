@@ -22,10 +22,10 @@ export class Observation {
   imgDataId: number | null;
 
   constructor(
-    title: string,
-    description: string | null,
-    date: moment.Moment,
-    type: string,
+    title?: string,
+    description?: string | null,
+    date?: moment.Moment,
+    type?: string,
     id?: number,
   ) {
     this.id = id;
