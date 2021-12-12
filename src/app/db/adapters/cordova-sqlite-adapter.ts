@@ -1,4 +1,4 @@
-import { SQLiteObject } from '@ionic-native/sqlite/ngx';
+import { SQLiteObject, DbTransaction } from '@ionic-native/sqlite/ngx';
 
 import _, { reject } from 'lodash';
 
@@ -15,6 +15,28 @@ export class CordovaSqliteAdapter extends AbstractDbAdapter {
 
   executeSql = (sql: string, values?: any[]) => {
     return this.db.executeSql(sql, values);
+  }
+  
+  txExecute = (
+    tx: DbTransaction,
+    sqlRow: string,
+    getValues: (ctx: any) => any,
+    context: any,
+  ) => {
+    return new Promise((resolve, reject) => {
+      tx.executeSql(
+        sqlRow,
+        getValues(context),
+        (tx, result) => {
+          const resultObj = this.getRowsFromResult(result);
+          resolve(resultObj);
+        },
+        (tx, error) => {
+          reject(error);
+          return false;
+        }
+      );
+    });
   }
 
   executeTransaction = (sql: string[], values?: any[][]) => {
@@ -40,24 +62,14 @@ export class CordovaSqliteAdapter extends AbstractDbAdapter {
   executeTransactionWithContext = (sql: string[], getValuesFns?: GetValuesFn[], editContextFns?: EditContextFn[]) => {
     const context = {};
     return new Promise(async (resolve, reject) => {
-      const res = await this.db.transaction(tx => {
-        let breakFlag = false;
+      const res = await this.db.transaction(async tx => {
         for(const entry of _.zip(sql, getValuesFns || [], editContextFns || [])) {
           const [sqlRow, getValues, editContext] = entry;
-          tx.executeSql(
-            sqlRow,
-            getValues(context),
-            (tx, result) => {
-              const resultObj = this.getRowsFromResult(result);
-              editContext(resultObj, context);
-            },
-            (tx, error) => {
-              reject(error);
-              breakFlag = true;
-              return false;
-            }
-          )
-          if (breakFlag) {
+          try {
+            const result = await this.txExecute(tx, sqlRow, getValues, context);
+            editContext(result, context);
+          } catch(e) {
+            window.alert(e.message);
             break;
           }
         }

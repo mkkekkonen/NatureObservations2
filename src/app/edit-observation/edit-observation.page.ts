@@ -3,6 +3,7 @@ import { Platform, ModalController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { Capacitor } from '@capacitor/core';
 
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
@@ -14,7 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Repository } from 'typeorm';
 import * as moment from 'moment';
 
-import { Observation, ImgData, MapLocation } from '../models';
+import { Observation, ImgData, MapLocation, ObservationType } from '../models';
 import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
 import { MapModalPage } from '../map-modal/map-modal.page';
 import { DebugService } from '../debug.service';
@@ -37,9 +38,11 @@ export class EditObservationPage implements OnInit {
   mapLocation: MapLocation;
 
   time = moment.default().format(componentDateFormat);
+  type: ObservationType;
 
   cameraOptions: CameraOptions;
   photoLibraryOptions: CameraOptions;
+  showImageSpinner = false;
 
   modal: any;
 
@@ -131,7 +134,7 @@ export class EditObservationPage implements OnInit {
 
   get imageUrl() {
     if (this.imgData) {
-      return (window as any).Ionic.WebView.convertFileSrc(this.imgData.fileUri);
+      return Capacitor.convertFileSrc(this.imgData.fileUri);
     }
 
     return undefined;
@@ -140,14 +143,36 @@ export class EditObservationPage implements OnInit {
   async takePicture(usePhotoLibrary?: 'photoLibrary') {
     await this.platform.ready();
 
+    this.showImageSpinner = true;
+
     const imageUrl = await this.camera.getPicture(!usePhotoLibrary ? this.cameraOptions : this.photoLibraryOptions);
 
     try {
       const path = await this.filePath.resolveNativePath(`file://${imageUrl}`);
+      // const dataUrl = this.debugService.debugMode ? await this.imageToDataUrl(Capacitor.convertFileSrc(imageUrl)) : null;
       this.imgData = new ImgData(path, null, null);
     } catch(e) {
       window.alert(e.message);
     }
+
+    this.showImageSpinner = false;
+  }
+
+  imageToDataUrl(url): Promise<string> {
+    const xhr = new XMLHttpRequest();
+    return new Promise((resolve, reject) => {
+      xhr.onload = () => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve(reader.result as string);
+        }
+        reader.onerror = reject;
+        reader.readAsDataURL(xhr.response);
+      }
+      xhr.open('GET', url);
+      xhr.responseType = 'blob';
+      xhr.send();
+    });
   }
 
   async openTypeModal() {
@@ -159,7 +184,8 @@ export class EditObservationPage implements OnInit {
       if (event.data) {
         const { observationType } = event.data;
         if (observationType) {
-          this.observation.type = observationType;
+          this.type = observationType;
+          this.observation.type = observationType && observationType.name;
         }
       }
     });
@@ -233,13 +259,13 @@ export class EditObservationPage implements OnInit {
       return;
     }
 
-    try {
-      if (this.observation && !this.observation.id) {
-        await this.transactionScriptRunner.saveNewObservation(this.observation, this.imgData, this.mapLocation);
+    this.observation.date = moment.default(this.time);
+
+    if (this.observation && !this.observation.id) {
+      const res = await this.transactionScriptRunner.saveNewObservation(this.observation, this.imgData, this.mapLocation);
+      if (!res) {
+        return;
       }
-    } catch(e) {
-      window.alert(`Error: ${e.message}`);
-      return;
     }
 
     await this.router.navigate(['/home'])

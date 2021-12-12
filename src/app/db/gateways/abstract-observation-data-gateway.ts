@@ -5,6 +5,9 @@ import { AbstractGateway, TableName, IModel } from './abstract-gateway';
 export const getSelectObservationDataClause = (tableName: TableName) =>
   `SELECT * FROM ${tableName} WHERE observationId = ?`;
 
+export const getDeleteObservationDataClause = (tableName: TableName) =>
+  `DELETE FROM ${tableName} WHERE observationId = ?`;
+
 export abstract class AbstractObservationDataGateway<T extends IModel> extends AbstractGateway<T> {
   constructor(db?: AbstractDbAdapter) {
     super(db);
@@ -20,8 +23,17 @@ export abstract class AbstractObservationDataGateway<T extends IModel> extends A
     }
   }
 
+  deleteByObservationId = async (observationId: number) => {
+    return await this.sqlDeleteByObservationId(observationId);
+  }
+
   private sqlGetByObservationId = (observationId: number) => this.db.executeSql(
     getSelectObservationDataClause(this.getTableName()),
+    [observationId],
+  )
+
+  private sqlDeleteByObservationId = (observationId: number) => this.db.executeSql(
+    getDeleteObservationDataClause(this.getTableName()),
     [observationId],
   )
 }

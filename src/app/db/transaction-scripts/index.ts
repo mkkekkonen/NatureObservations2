@@ -1,1 +1,1 @@
-export { saveNewObservation } from './save-observation';
+export { saveNewObservation, saveNewObservationManual } from './save-observation';

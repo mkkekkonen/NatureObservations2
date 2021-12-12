@@ -3,7 +3,10 @@
 <ion-content>
   <div class="image-container">
     <div class="image-placeholder" *ngIf="!imgData">
-      <ion-icon name="image"></ion-icon>
+      <ion-spinner name="crescent" color="light" *ngIf="showImageSpinner; else imageIcon"></ion-spinner>
+      <ng-template #imageIcon>
+        <ion-icon name="image"></ion-icon>
+      </ng-template> 
     </div>
     <img *ngIf="imageUrl" [src]="imageUrl" />
   </div>
@@ -38,7 +41,7 @@
     </ion-list-header>
 
     <ion-item>
-      <app-observation-type-entry *ngIf="observation.type" [observationType]="observation.type"></app-observation-type-entry>
+      <app-observation-type-entry *ngIf="type" [observationType]="type"></app-observation-type-entry>
     </ion-item>
 
     <ion-item>

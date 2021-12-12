@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
 
 import * as moment from 'moment';
 
@@ -37,10 +38,7 @@ export class ObservationCardComponent implements OnInit {
   }
 
   get imgUrl() {
-    if (this.imgData) {
-      return (window as any).Ionic.WebView.convertFileSrc(this.imgData.fileUri);
-    }
-    return null;
+    return this.imgData ? Capacitor.convertFileSrc(this.imgData.fileUri) : null;
   }
 
   async getImgData() {

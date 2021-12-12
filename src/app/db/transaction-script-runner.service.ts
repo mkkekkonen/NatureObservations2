@@ -6,7 +6,7 @@ import { Observation, ImgData, MapLocation } from '../models';
 import { DbService } from '../db.service';
 
 import { CordovaSqliteAdapter } from './adapters';
-import { saveNewObservation } from './transaction-scripts';
+import { saveNewObservation, saveNewObservationManual } from './transaction-scripts';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class TransactionScriptRunnerService {
 
   constructor(private dbService: DbService) {}
 
-  saveNewObservation = async (
+  saveNewObservationTx = (
     observation: Observation,
     imgData: ImgData,
     mapLocation: MapLocation,
@@ -26,6 +26,21 @@ export class TransactionScriptRunnerService {
        observation,
        imgData,
        mapLocation,
-     )
+     );
+   }
+
+   saveNewObservation = (
+     observation: Observation,
+     imgData: ImgData,
+     mapLocation: MapLocation,
+   ) => {
+     return saveNewObservationManual(
+       observation,
+       imgData,
+       mapLocation,
+       this.dbService.observationGateway,
+       this.dbService.imgDataGateway,
+       this.dbService.mapLocationGateway,
+     );
    }
 }

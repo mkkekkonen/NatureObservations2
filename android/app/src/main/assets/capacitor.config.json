@@ -7,7 +7,7 @@
   "cordova": {},
   "server": {
     "hostname": "localhost",
-    "url": "http://192.168.30.144:8100",
+    "url": "http://192.168.100.11:8100",
     "cleartext": true
   }
 }
