@@ -83,12 +83,15 @@ export class MapModalPage implements OnInit {
   }
 
   setMapLocation(name: string, latLng: L.LatLng) {
-    // this.mapLocation = new MapLocation();
-    // this.mapLocation.latitude = latLng.lat;
-    // this.mapLocation.longitude = latLng.lng;
-    // this.mapLocation.name = name;
+    if (this.mapLocation) {
+      this.mapLocation.name = name;
+      this.mapLocation.coords.latitude = latLng.lat;
+      this.mapLocation.coords.longitude = latLng.lng;
+    } else {
+      this.mapLocation = new MapLocation(name, latLng.lat, latLng.lng, null);
+    }
 
-    // this.setLeafletMarkerAndPan(latLng);
+    this.setLeafletMarkerAndPan(latLng);
   }
 
   setLeafletMarkerAndPan(latLng: L.LatLng) {
