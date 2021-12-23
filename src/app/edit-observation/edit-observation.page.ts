@@ -36,9 +36,9 @@ export class EditObservationPage implements OnInit {
   observation: Observation;
   imgData: ImgData;
   mapLocation: MapLocation;
+  type: ObservationType;
 
   time = moment.default().format(componentDateFormat);
-  type: ObservationType;
 
   cameraOptions: CameraOptions;
   photoLibraryOptions: CameraOptions;
@@ -102,20 +102,21 @@ export class EditObservationPage implements OnInit {
       next: async (observation) => {
         this.observation = observation || new Observation();
 
-        if (observation) {
-          if (this.observation.imgDataId) {
-            try {
-              this.imgData = await this.dbService.imgDataGateway.getById(this.observation.imgDataId);
-            } catch (e) {
-              window.alert(`Error fetching image data: ${e.message}`);
-            }
+        if (observation && observation.id) {
+          try {
+            this.imgData = await this.dbService.imgDataGateway.getByObservationId(observation.id);
+          } catch (e) {
+            window.alert(`Error fetching image data: ${e.message}`);
           }
-          if (this.observation.mapLocationId) {
-            try {
-              this.mapLocation = await this.dbService.mapLocationGateway.getById(this.observation.mapLocationId);
-            } catch (e) {
-              window.alert(`Error fetching map location: ${e.message}`);
-            }
+          try {
+            this.mapLocation = await this.dbService.mapLocationGateway.getByObservationId(observation.id);
+          } catch (e) {
+            window.alert(`Error fetching map location: ${e.message}`);
+          }
+          try {
+            this.type = await this.dbService.observationTypeGateway.getByTypeName(observation.type);
+          } catch (e) {
+            window.alert(`Error fetching observation type: ${e.message}`);
           }
         }
       },
@@ -150,7 +151,12 @@ export class EditObservationPage implements OnInit {
     try {
       const path = await this.filePath.resolveNativePath(`file://${imageUrl}`);
       // const dataUrl = this.debugService.debugMode ? await this.imageToDataUrl(Capacitor.convertFileSrc(imageUrl)) : null;
-      this.imgData = new ImgData(path, null, null);
+      if (this.imgData) {
+        this.imgData.fileUri = path;
+        this.imgData.debugDataUri = null;
+      } else {
+        this.imgData = new ImgData(path, null, null);
+      }
     } catch(e) {
       window.alert(e.message);
     }
@@ -194,6 +200,13 @@ export class EditObservationPage implements OnInit {
   }
 
   async initLeafletMap() {
+    if (this.mapLocation && this.mapLocation.id) {
+      const { latitude, longitude } = this.mapLocation.coords;
+      const latLng = L.latLng(latitude, longitude);
+      this.createLeafletMap(latLng);
+      return;
+    }
+
     if (!this.debugService.debugMode) {
       const currentPosition = await this.geolocation.getCurrentPosition();
       const latLng = L.latLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
@@ -215,6 +228,7 @@ export class EditObservationPage implements OnInit {
       }
     ).setView(latLng, 15);
     L.tileLayer.provider('Thunderforest.Outdoors', { apikey: thunderforestApiKey }).addTo(this.map);
+    this.setLeafletMarkerAndPan(latLng);
     setTimeout(() => {
       this.map.invalidateSize();
     }, 1500);
@@ -226,7 +240,13 @@ export class EditObservationPage implements OnInit {
     });
     modal.onDidDismiss().then(event => {
       if (event.data && event.data.mapLocation) {
-        this.mapLocation = event.data.mapLocation;
+        if (!this.mapLocation) {
+          this.mapLocation = event.data.mapLocation;
+        } else {
+          const { name, coords } = event.data.mapLocation;
+          this.mapLocation.name = name;
+          this.mapLocation.coords = coords;
+        }
         const { latitude, longitude } = this.mapLocation.coords;
         this.setLeafletMarkerAndPan(new L.LatLng(latitude, longitude));
       }
