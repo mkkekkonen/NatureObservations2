@@ -20,23 +20,24 @@ export class CordovaSqliteAdapter extends AbstractDbAdapter {
   txExecute = (
     tx: DbTransaction,
     sqlRow: string,
-    getValues: (ctx: any) => any,
-    context: any,
+    getValues: GetValuesFn,
+    editContext: EditContextFn,
+    context,
   ) => {
-    return new Promise((resolve, reject) => {
-      tx.executeSql(
-        sqlRow,
-        getValues(context),
-        (tx, result) => {
-          const resultObj = this.getRowsFromResult(result);
-          resolve(resultObj);
-        },
-        (tx, error) => {
-          reject(error);
-          return false;
-        }
-      );
-    });
+    // return new Promise((resolve, reject) => {
+    tx.executeSql(
+      sqlRow,
+      getValues(context),
+      (tx, result) => {
+        editContext(result, result.insertId, context);
+        // resolve(result);
+      },
+      (tx, error) => {
+        // reject(error);
+        return false;
+      }
+    );
+    // });
   }
 
   executeTransaction = (sql: string[], values?: any[][]) => {
@@ -66,8 +67,7 @@ export class CordovaSqliteAdapter extends AbstractDbAdapter {
         for(const entry of _.zip(sql, getValuesFns || [], editContextFns || [])) {
           const [sqlRow, getValues, editContext] = entry;
           try {
-            const result = await this.txExecute(tx, sqlRow, getValues, context);
-            editContext(result, context);
+            const result = this.txExecute(tx, sqlRow, getValues, editContext, context);
           } catch(e) {
             window.alert(e.message);
             break;

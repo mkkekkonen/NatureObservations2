@@ -8,6 +8,9 @@ export const getSelectObservationDataClause = (tableName: TableName) =>
 export const getDeleteObservationDataClause = (tableName: TableName) =>
   `DELETE FROM ${tableName} WHERE observationId = ?`;
 
+export const getUpdateObservationIdClause = (tableName: TableName) =>
+  `UPDATE ${tableName} SET observationId = ? WHERE id = ?`;
+
 export abstract class AbstractObservationDataGateway<T extends IModel> extends AbstractGateway<T> {
   constructor(db?: AbstractDbAdapter) {
     super(db);

@@ -283,9 +283,6 @@ export class EditObservationPage implements OnInit {
 
     if (this.observation && !this.observation.id) {
       const res = await this.transactionScriptRunner.saveNewObservation(this.observation, this.imgData, this.mapLocation);
-      if (!res) {
-        return;
-      }
     }
 
     await this.router.navigate(['/home'])

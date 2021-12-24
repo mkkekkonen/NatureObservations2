@@ -39,7 +39,7 @@ export class SqlJsAdapter extends AbstractDbAdapter {
           const [sqlRow, getValues, editContext] = entry;
           const res = this.db.exec(sqlRow, getValues(context));
           const resultObj = this.getRowsFromResult(res);
-          editContext(resultObj, context);
+          editContext(resultObj, 1, context);
         }),
     );
   }

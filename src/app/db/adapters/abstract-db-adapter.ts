@@ -5,7 +5,7 @@ type DatabaseType = CordovaSqliteObject | SqlJsDatabase;
 
 export type GetValuesFn = (ctx: any) => any[];
 
-export type EditContextFn = (res: any, ctx: any) => void;
+export type EditContextFn = (res: any, id: number, ctx: any) => void;
 
 export abstract class AbstractDbAdapter {
   database?: DatabaseType;

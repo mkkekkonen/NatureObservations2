@@ -16,7 +16,7 @@ export class TransactionScriptRunnerService {
 
   constructor(private dbService: DbService) {}
 
-  saveNewObservationTx = (
+  saveNewObservation = (
     observation: Observation,
     imgData: ImgData,
     mapLocation: MapLocation,
@@ -29,7 +29,7 @@ export class TransactionScriptRunnerService {
      );
    }
 
-   saveNewObservation = (
+   saveNewObservationManual = (
      observation: Observation,
      imgData: ImgData,
      mapLocation: MapLocation,

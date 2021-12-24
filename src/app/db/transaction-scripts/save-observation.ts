@@ -3,66 +3,94 @@ import _ from 'lodash';
 import { Observation, ImgData, MapLocation } from '../../models';
 
 import { AbstractDbAdapter, GetValuesFn, EditContextFn } from '../adapters/abstract-db-adapter';
-import { getInsertClause, getFetchLastIdClause } from '../gateways/abstract-gateway';
+import { getInsertClause } from '../gateways/abstract-gateway';
+import { getUpdateObservationIdClause } from '../gateways/abstract-observation-data-gateway';
 
 import { ObservationGateway, valueNames as observationValueNames } from '../gateways/observation-gateway';
 import { ImgDataGateway, valueNames as imgDataValueNames } from '../gateways/img-data-gateway';
 import { MapLocationGateway, valueNames as mapLocationValueNames } from '../gateways/map-location-gateway';
 
-export const saveNewObservation = (
+interface IIds {
+  observationId?: number
+  imgDataId?: number
+  mapLocationId?: number
+}
+
+const saveObservationData = async (
+  dbAdapter: AbstractDbAdapter,
+  observation: Observation,
+  imgData: ImgData,
+  mapLocation: MapLocation,
+  ids: IIds,
+) => {
+  const sql = [];
+  const getValuesFns: GetValuesFn[] = [];
+  const editContextFns: EditContextFn[] = [];
+
+  sql.push(getInsertClause('observation', observationValueNames));
+  getValuesFns.push(ctx => [observation.title, observation.description, observation.date, observation.type]);
+  editContextFns.push((res, id, ctx) => {
+    observation.id = id;
+    ids.observationId = id;
+  });
+
+  if (imgData) {
+    sql.push(getInsertClause('imgData', imgDataValueNames));
+    getValuesFns.push(ctx => [imgData.fileUri, imgData.debugDataUri, null]);
+    editContextFns.push((res, id, ctx) => {
+      imgData.id = id;
+      imgData.observationId = ids.observationId;
+      ids.imgDataId = id;
+    });
+  }
+
+  if (mapLocation) {
+    sql.push(getInsertClause('mapLocation', mapLocationValueNames));
+    getValuesFns.push(ctx => {
+      return [
+        mapLocation.name,
+        mapLocation.coords ? mapLocation.coords.latitude : null,
+        mapLocation.coords ? mapLocation.coords.longitude : null,
+        null,
+      ];
+    });
+    editContextFns.push((res, id, ctx) => {
+      mapLocation.id = id;
+      mapLocation.observationId = ids.observationId;
+      ids.mapLocationId = id;
+    });
+  }
+
+  return dbAdapter.executeTransactionWithContext(sql, getValuesFns, editContextFns);
+};
+
+const updateObservationIds = async (dbAdapter: AbstractDbAdapter, ids: IIds) => {
+  const sql = [];
+  const values = [];
+
+  if (ids.imgDataId) {
+    sql.push(getUpdateObservationIdClause('imgData'));
+    values.push([ids.observationId, ids.imgDataId])
+  }
+
+  if (ids.mapLocationId) {
+    sql.push(getUpdateObservationIdClause('mapLocation'));
+    values.push([ids.observationId, ids.mapLocationId]);
+  }
+
+  return dbAdapter.executeTransaction(sql, values);
+};
+
+export const saveNewObservation = async (
   dbAdapter: AbstractDbAdapter,
   observation: Observation,
   imgData: ImgData,
   mapLocation: MapLocation,
 ) => {
-    const sql = [];
-    const getValuesFns: GetValuesFn[] = [];
-    const editContextFns: EditContextFn[] = [];
+  const ids: IIds = {};
 
-    sql.push(getInsertClause('observation', observationValueNames));
-    getValuesFns.push(ctx => [observation.title, observation.description, observation.date, observation.type]);
-    editContextFns.push((res, ctx) => {});
-
-    sql.push(getFetchLastIdClause('observation'));
-    getValuesFns.push(ctx => []);
-    editContextFns.push((res, ctx) => {
-      const id = res[0].id;
-      ctx.observationId = id;
-      observation.id = id;
-    });
-
-    if (imgData) {
-      sql.push(getInsertClause('imgData', imgDataValueNames));
-      getValuesFns.push(ctx => [imgData.fileUri, imgData.debugDataUri, ctx.observationId]);
-      editContextFns.push((res, ctx) => {});
-
-      sql.push(getFetchLastIdClause('imgData'));
-      getValuesFns.push(ctx => []);
-      editContextFns.push((res, ctx) => {
-        imgData.id = res[0].id;
-      });
-    }
-
-    if (mapLocation) {
-      sql.push(getInsertClause('mapLocation', mapLocationValueNames));
-      getValuesFns.push(ctx => {
-        return [
-          mapLocation.name,
-          mapLocation.coords ? mapLocation.coords.latitude : null,
-          mapLocation.coords ? mapLocation.coords.longitude : null,
-          ctx.observationId,
-        ];
-      });
-      editContextFns.push((res, ctx) => {});
-
-      sql.push(getFetchLastIdClause('mapLocation'));
-      getValuesFns.push(ctx => []);
-      editContextFns.push((res, ctx) => {
-        mapLocation.id = res[0].id;
-      });
-    }
-
-    return dbAdapter.executeTransactionWithContext(sql, getValuesFns, editContextFns);
+  await saveObservationData(dbAdapter, observation, imgData, mapLocation, ids);
+  await updateObservationIds(dbAdapter, ids);
 };
 
 export const saveNewObservationManual = async (
