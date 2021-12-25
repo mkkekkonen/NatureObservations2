@@ -96,14 +96,31 @@ describe('MapLocation', () => {
       expect(obj).toEqual(new MapLocation('Hallila', 12.3456, 78.9012, 2, 1));
     });
 
-    it('gets the map location by observation ID', async () => {
-      const obj = await gateway.getByObservationId(2);
-      expect(obj).toEqual(new MapLocation('Hallila', 12.3456, 78.9012, 2, 1));
-    });
-
     it('deletes the map location by ID', async () => {
       await gateway.delete(1);
       
+      const all = await gateway.getAll();
+      expect(all.length).toEqual(0);
+    });
+  });
+
+  describe('observation data DB functions', () => {
+    it('gets map location by observation ID', async () => {
+      const obj = new MapLocation('Lempäälä', 23.456, 98.765, 3);
+
+      try {
+        gateway.insert(obj);
+      } catch (e) {
+        console.log(e.message);
+      }
+
+      const obj2 = await gateway.getByObservationId(3);
+      expect(obj2).toEqual(new MapLocation('Lempäälä', 23.456, 98.765, 3, 2));
+    });
+
+    it('deletes map location by observation ID', async () => {
+      await gateway.deleteByObservationId(3);
+
       const all = await gateway.getAll();
       expect(all.length).toEqual(0);
     });

@@ -57,7 +57,7 @@ describe('ImgData', () => {
       try {
         gateway.insert(obj);
       } catch (e) {
-        console.log(e);
+        console.log(e.message);
       }
 
       const all = await gateway.getAll();
@@ -83,16 +83,33 @@ describe('ImgData', () => {
       expect(obj).toEqual(new ImgData('file:///foo/bar', null, 2, 1));
     });
 
-    it('gets image data by observation ID', async () => {
-      const obj = await gateway.getByObservationId(2);
-      expect(obj).toEqual(new ImgData('file:///foo/bar', null, 2, 1));
-    });
-
     it('deletes image data by ID', async () => {
       await gateway.delete(1);
 
       const all = await gateway.getAll();
       expect(all.length).toEqual(0);
     });
+  });
+
+  describe('observation data DB functions', () => {
+    it('gets image data by observation ID', async () => {
+      const obj = new ImgData('file:///asd/fgh', null, 3);
+
+      try {
+        gateway.insert(obj);
+      } catch (e) {
+        console.log(e.message);
+      }
+
+      const obj2 = await gateway.getByObservationId(3);
+      expect(obj2).toEqual(new ImgData('file:///asd/fgh', null, 3, 2));
+    });
+  });
+
+  it('deletes image data by observation ID', async () => {
+    await gateway.deleteByObservationId(3);
+
+    const all = await gateway.getAll();
+    expect(all.length).toEqual(0);
   });
 });
