@@ -200,7 +200,7 @@ export const updateObservation = async (
   imgData: ImgData,
   mapLocation: MapLocation,
 ) => {
-  const ids: IIds = {};
+  const ids: IIds = { observationId: observation.id };
 
   await updateObservationData(dbAdapter, observation, imgData, mapLocation, ids);
   await updateObservationIds(dbAdapter, ids);
