@@ -10,17 +10,16 @@ import {
 describe('clause functions', () => {
   it('correctly generates insert clause', () => {
     const tableName = 'observation';
-    const valueNames = ['id', 'title', 'description', 'date', 'type'];
+    const valueNames = ['title', 'description', 'date', 'type'];
     expect(getInsertClause(tableName, valueNames))
-      .toEqual('INSERT INTO observation (id, title, description, date, type) VALUES (?, ?, ?, ?, ?)');
+      .toEqual('INSERT INTO observation (title, description, date, type) VALUES (?, ?, ?, ?)');
   });
 
   it('correctly generates update clause', () => {
     const tableName = 'observation';
-    const id = 15;
-    const valueNames = ['id', 'title', 'description', 'date', 'type'];
-    expect(getUpdateClause(tableName, id, valueNames))
-      .toEqual('UPDATE observation SET id = ?, title = ?, description = ?, date = ?, type = ? WHERE id = ?');
+    const valueNames = ['title', 'description', 'date', 'type'];
+    expect(getUpdateClause(tableName, valueNames))
+      .toEqual('UPDATE observation SET title = ?, description = ?, date = ?, type = ? WHERE id = ?');
   });
 
   it('correctly generates fetch all clause', () => {

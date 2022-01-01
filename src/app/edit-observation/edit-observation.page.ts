@@ -282,7 +282,9 @@ export class EditObservationPage implements OnInit {
     this.observation.date = moment.default(this.time);
 
     if (this.observation && !this.observation.id) {
-      const res = await this.transactionScriptRunner.saveNewObservation(this.observation, this.imgData, this.mapLocation);
+      await this.transactionScriptRunner.saveNewObservation(this.observation, this.imgData, this.mapLocation);
+    } else if (this.observation && this.observation.id) {
+      await this.transactionScriptRunner.updateObservation(this.observation, this.imgData, this.mapLocation); 
     }
 
     await this.router.navigate(['/home'])

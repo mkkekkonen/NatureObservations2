@@ -24,7 +24,7 @@ export const getInsertClause = (tableName: TableName, valueNames: string[]) => {
   return `INSERT INTO ${tableName} (${valueNamesStr}) VALUES ${placeholders}`;
 };
 
-export const getUpdateClause = (tableName: TableName, id: number, valueNames: string[]) => {
+export const getUpdateClause = (tableName: TableName, valueNames: string[]) => {
   const namedPlaceholders = valueNames.map(name => `${name} = ?`).join(', ');
   return `UPDATE ${tableName} SET ${namedPlaceholders} WHERE id = ?`;
 };
@@ -116,7 +116,7 @@ export abstract class AbstractGateway<T extends IModel> {
     this.validateValues(data);
     data.push(id);
     return this.db.executeSql(
-      getUpdateClause(this.getTableName(), id, this.getValueNames()),
+      getUpdateClause(this.getTableName(), this.getValueNames()),
       data,
     );
   }
