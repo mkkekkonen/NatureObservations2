@@ -160,10 +160,10 @@ export class MyObservationsPage implements OnInit {
     }
 
     if (indexInObservations > -1) {
-      this.observations.splice(indexInObservations);
+      this.observations.splice(indexInObservations, 1);
     }
     if (indexInAllObservations > -1) {
-      this.allObservations.splice(indexInAllObservations);
+      this.allObservations.splice(indexInAllObservations, 1);
     }
   }
 

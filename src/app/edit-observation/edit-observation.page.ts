@@ -204,6 +204,7 @@ export class EditObservationPage implements OnInit {
       const { latitude, longitude } = this.mapLocation.coords;
       const latLng = L.latLng(latitude, longitude);
       this.createLeafletMap(latLng);
+      this.setLeafletMarkerAndPan(latLng);
       return;
     }
 
@@ -228,7 +229,6 @@ export class EditObservationPage implements OnInit {
       }
     ).setView(latLng, 15);
     L.tileLayer.provider('Thunderforest.Outdoors', { apikey: thunderforestApiKey }).addTo(this.map);
-    this.setLeafletMarkerAndPan(latLng);
     setTimeout(() => {
       this.map.invalidateSize();
     }, 1500);

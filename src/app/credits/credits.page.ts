@@ -25,8 +25,8 @@ export class CreditsPage implements OnInit {
       url: 'https://www.flaticon.com/authors/pixel-perfect',
     },
     {
-      name: 'https://www.flaticon.com/authors/twitter',
-      url: 'Twitter',
+      name: 'Twitter',
+      url: 'https://www.flaticon.com/authors/twitter',
     },
   ];
 
