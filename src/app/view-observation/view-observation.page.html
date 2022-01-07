@@ -27,7 +27,7 @@
     </ion-list-header>
 
     <ion-item *ngIf="observation?.type">
-      <app-observation-type-entry [observationType]="observation.type"></app-observation-type-entry>
+      <app-observation-type-entry [observationType]="observationType"></app-observation-type-entry>
     </ion-item>
 
     <ion-list-header *ngIf="observation?.date">
@@ -40,13 +40,13 @@
 
     <ion-list-header>{{ 'VIEWOBS.LOCATION' | translate }}</ion-list-header>
 
-    <ion-item *ngIf="observation?.mapLocation?.name">
-      <ion-label>{{ observation.mapLocation.name }}</ion-label>
+    <ion-item *ngIf="mapLocation?.name">
+      <ion-label>{{ mapLocation?.name }}</ion-label>
     </ion-item>
 
     <div ion-item>
       <div item-content #viewMap id="viewMap">
-        <div *ngIf="!observation?.mapLocation" class="map-placeholder">
+        <div *ngIf="!mapLocation" class="map-placeholder">
           <ion-icon name="pin"></ion-icon>
         </div>
       </div>

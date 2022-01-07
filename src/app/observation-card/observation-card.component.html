@@ -8,8 +8,8 @@
 
   <ion-card-content>
     <p>{{ formattedDate }}</p>
-    <p *ngIf="observation.mapLocation && observation.mapLocation.name">{{ observation.mapLocation.name }}</p>
-    <app-observation-type-entry *ngIf="observation.type" [observationType]="observation.type"></app-observation-type-entry>
+    <p *ngIf="mapLocation && mapLocation.name">{{ mapLocation.name }}</p>
+    <app-observation-type-entry *ngIf="observationType" [observationType]="observationType"></app-observation-type-entry>
 
     <ion-button size="small" color="danger" class="delete-button" (click)="deleteObservation($event)">
       <ion-icon name="trash"></ion-icon>

@@ -1,29 +1,39 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne } from 'typeorm';
+import moment from 'moment';
 
-import { ObservationType, MapLocation, ImgData } from '.';
+import { ImgData } from './img-data.entity';
+import { MapLocation } from './map-location.entity';
+import { ObservationType } from './observation-type.entity';
 
-@Entity('observation')
 export class Observation {
-  @PrimaryGeneratedColumn()
+  static dateFormat = 'YYYY-MM-DD HH:mm:ss';
+
   id: number;
 
-  @Column()
   title: string;
 
-  @Column({ nullable: true })
-  description: string;
+  description: string | null;
 
-  @Column('datetime')
-  date: string;
+  date: moment.Moment;
 
-  @ManyToOne(t => ObservationType, observationType => observationType.observations)
-  type: ObservationType;
+  type: string;
 
-  @OneToOne(t => MapLocation, mapLocation => mapLocation.observation, { nullable: true })
-  mapLocation: MapLocation;
+  mapLocationId: number | null;
 
-  @OneToOne(t => ImgData, imgData => imgData.observation, { nullable: true })
-  imgData: ImgData;
+  imgDataId: number | null;
 
-  toString = () => `${this.title}: ${this.description}; ${this.date}; ${this.type && this.type.name}`;
+  constructor(
+    title?: string,
+    description?: string | null,
+    date?: moment.Moment,
+    type?: string,
+    id?: number,
+  ) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.date = date;
+    this.type = type;
+  }
+
+  toString = () =>  `${this.title}: ${this.description}; ${this.date}; ${this.type}`;
 }

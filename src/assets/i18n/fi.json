@@ -4,7 +4,7 @@
     "NEWOBS": "Uusi havainto",
     "CREDITS": "Credits",
     "DEBUG": "Debug",
-    "TITLE": "Ionic-sovellus"
+    "TITLE": "Luontohavainnot"
   },
   "HOME": {
     "NOBS": "Luontohavainnot",
@@ -76,7 +76,8 @@
     "TITLE": "Otsikko",
     "TYPE": "Tyyppi",
     "NOTYPE": "Ei tyyppiä",
-    "SEARCHWORD": "Sanahaku"
+    "SEARCHWORD": "Hakusana",
+    "WORDSEARCH": "Sanahaku"
   },
   "OBSTYPE": {
     "LANDSCAPE": "Maisema",
@@ -89,6 +90,9 @@
     "PLANT": "Kasvi",
     "MUSHROOM": "Sieni",
     "WEATHER": "Sää",
+    "ARACHNID": "Hämähäkkieläin",
+    "FLOWER": "Kukka",
+    "TREE": "Puu",
     "OTHER": "Muu"
   },
   "ERROR": {

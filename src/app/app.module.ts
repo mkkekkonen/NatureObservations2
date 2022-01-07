@@ -10,6 +10,7 @@ import { Globalization } from '@ionic-native/globalization/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { SQLite } from '@ionic-native/sqlite/ngx';
 
 import { TranslateModule, TranslateLoader, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -24,6 +25,8 @@ import { ComponentsModule } from './components/components.module';
 import { MyObservationsPageModule } from './my-observations/my-observations.module';
 import { EditObservationPageModule } from './edit-observation/edit-observation.module';
 import { ViewObservationPageModule } from './view-observation/view-observation.module';
+import { CreditsPageModule } from './credits/credits.module';
+import { DebugPageModule } from './debug/debug.module';
 
 import secrets from './secrets.json';
 
@@ -51,6 +54,8 @@ const errorHandlerFactory = () => new BugsnagErrorHandler(bugsnagClient);
     MyObservationsPageModule,
     EditObservationPageModule,
     ViewObservationPageModule,
+    CreditsPageModule,
+    DebugPageModule,
   ],
   providers: [
     StatusBar,
@@ -62,6 +67,7 @@ const errorHandlerFactory = () => new BugsnagErrorHandler(bugsnagClient);
     Camera,
     FilePath,
     Geolocation,
+    SQLite,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useFactory: errorHandlerFactory },
   ],

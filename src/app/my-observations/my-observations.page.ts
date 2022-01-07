@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 
-import { Repository } from 'typeorm';
+// import { Repository } from 'typeorm';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Observation, ObservationType, ImgData, MapLocation } from '../models';
@@ -16,6 +16,7 @@ import {
   ASC,
   DESC,
 } from '../search-sort.service';
+import { DebugService } from '../debug.service';
 import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
 
 @Component({
@@ -47,22 +48,28 @@ export class MyObservationsPage implements OnInit {
   observations: Observation[] = null;
 
   newObservationUrl = ['/edit-observation'];
+  debugUrl = ['/debug'];
+
+  debug = false;
 
   constructor(
     private modalController: ModalController,
     private translateService: TranslateService,
     private dbService: DbService,
     private searchSortService: SearchSortService,
+    private debugService: DebugService,
+    private platform: Platform,
   ) {
     this.deleteObservation = this.deleteObservation.bind(this);
     this.loadObservations = this.loadObservations.bind(this);
   }
 
   ngOnInit() {
+    this.debug = this.debugService.debugMode;
   }
 
   ionViewWillEnter() {
-    this.loadObservations();
+    this.platform.ready().then(() => this.loadObservations());
   }
 
   get searchIcon() {
@@ -84,14 +91,14 @@ export class MyObservationsPage implements OnInit {
 
   loadObservations() {
     window.setTimeout(async () => {
-      const connection = await this.dbService.getConnection();
-      const typeRepository = connection.getRepository('observationtype') as Repository<ObservationType>;
-      const observationRepository = connection.getRepository('observation') as Repository<Observation>;
-
-      this.observationTypes = await typeRepository.find();
-      const observations = (await observationRepository.find({ relations: ['imgData', 'mapLocation', 'type'] })).reverse();
-      this.allObservations = [...observations];
-      this.observations = [...observations];
+      try {
+        this.observationTypes = await this.dbService.observationTypeGateway.getAll();
+        const observations = (await this.dbService.observationGateway.getAll()).reverse();
+        this.allObservations = [...observations];
+        this.observations = [...observations];
+      } catch (e) {
+        window.alert(`Error loading observations: ${e.message}`)
+      }
     }, 500);
   }
 
@@ -151,24 +158,17 @@ export class MyObservationsPage implements OnInit {
     const indexInObservations = this.observations.findIndex(listObservation => listObservation.id === observation.id);
     const indexInAllObservations = this.allObservations.findIndex(listObservation => listObservation.id === observation.id);
 
-    const connection = await this.dbService.getConnection();
-    
     try {
-      connection.transaction(async entityManager => {
-        await entityManager.delete(ImgData, { observation });
-        await entityManager.delete(MapLocation, { observation });
-        await entityManager.remove(observation);
-      });
-    } catch(e) {
-      window.alert(`Virhe: ${e.message}`);
-      return;
+      await this.dbService.observationGateway.delete(observation.id);
+    } catch (e) {
+      window.alert(`Error deleting observation: ${e.message}`);
     }
 
     if (indexInObservations > -1) {
-      this.observations.splice(indexInObservations);
+      this.observations.splice(indexInObservations, 1);
     }
     if (indexInAllObservations > -1) {
-      this.allObservations.splice(indexInAllObservations);
+      this.allObservations.splice(indexInAllObservations, 1);
     }
   }
 

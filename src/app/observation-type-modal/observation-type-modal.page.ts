@@ -24,10 +24,11 @@ export class ObservationTypeModalPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.dbService.getConnection().then(async connection => {
-      const observationTypeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
-      this.observationTypes = await observationTypeRepository.find();
-    });
+    this.loadObservationTypes();
+  }
+
+  async loadObservationTypes() {
+    this.observationTypes = await this.dbService.observationTypeGateway.getAll();
   }
 
   confirm() {

@@ -3,6 +3,7 @@ import { Platform, ModalController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { Capacitor } from '@capacitor/core';
 
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
@@ -14,11 +15,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { Repository } from 'typeorm';
 import * as moment from 'moment';
 
-import { Observation, ImgData, MapLocation } from '../models';
+import { Observation, ImgData, MapLocation, ObservationType } from '../models';
 import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
 import { MapModalPage } from '../map-modal/map-modal.page';
 import { DebugService } from '../debug.service';
 import { DbService } from '../db.service';
+import { TransactionScriptRunnerService } from '../db/transaction-script-runner.service';
 import { thunderforestApiKey } from '../secrets.json';
 
 const componentDateFormat = 'YYYY-MM-DDTHH:mm:ss';
@@ -30,11 +32,17 @@ const componentDateFormat = 'YYYY-MM-DDTHH:mm:ss';
 })
 export class EditObservationPage implements OnInit {
   observation$: Observable<Observation>;
-  observation = new Observation();
+
+  observation: Observation;
+  imgData: ImgData;
+  mapLocation: MapLocation;
+  type: ObservationType;
+
   time = moment.default().format(componentDateFormat);
 
   cameraOptions: CameraOptions;
   photoLibraryOptions: CameraOptions;
+  showImageSpinner = false;
 
   modal: any;
 
@@ -52,6 +60,7 @@ export class EditObservationPage implements OnInit {
     private router: Router,
     private debugService: DebugService,
     private dbService: DbService,
+    private transactionScriptRunner: TransactionScriptRunnerService,
   ) {
     const commonCameraOptions: CameraOptions = {
       quality: 100,
@@ -80,40 +89,53 @@ export class EditObservationPage implements OnInit {
           return undefined;
         }
 
-        const connection = await this.dbService.getConnection();
-        const observationRepository = connection.getRepository('observation') as Repository<Observation>;
         try {
-          const observations = await observationRepository.find({ where: { id: observationId }, relations: ['imgData', 'mapLocation', 'type'] });
-          if (observations.length > 0) {
-            const [first] = observations;
-            return first;
-          }
-        } catch(e) {
+          const observation = await this.dbService.observationGateway.getById(observationId);
+          return observation;
+        } catch (e) {
           window.alert(`Error fetching observation: ${e.message}`);
         }
       })
     );
 
     this.observation$.subscribe({
-      next: (observation) => {
-        if (observation) {
-          this.observation = observation;
-        }
+      next: async (observation) => {
+        this.observation = observation || new Observation();
 
-        this.platform.ready().then(() => {
-          this.initLeafletMap();
-        });
+        if (observation && observation.id) {
+          try {
+            this.imgData = await this.dbService.imgDataGateway.getByObservationId(observation.id);
+          } catch (e) {
+            window.alert(`Error fetching image data: ${e.message}`);
+          }
+          try {
+            this.mapLocation = await this.dbService.mapLocationGateway.getByObservationId(observation.id);
+          } catch (e) {
+            window.alert(`Error fetching map location: ${e.message}`);
+          }
+          try {
+            this.type = await this.dbService.observationTypeGateway.getByTypeName(observation.type);
+          } catch (e) {
+            window.alert(`Error fetching observation type: ${e.message}`);
+          }
+        }
       },
     });
   }
 
+  ionViewDidEnter() {
+    this.platform.ready().then(() => {
+      this.initLeafletMap();
+    });
+  }
+
   get title() {
-    return this.observation.id ? 'NEWOBS.EDITOBS' : 'NEWOBS.NEWOBS';
+    return this.observation && this.observation.id ? 'NEWOBS.EDITOBS' : 'NEWOBS.NEWOBS';
   }
 
   get imageUrl() {
-    if (this.observation.imgData) {
-      return (window as any).Ionic.WebView.convertFileSrc(this.observation.imgData.fileUri);
+    if (this.imgData) {
+      return Capacitor.convertFileSrc(this.imgData.fileUri);
     }
 
     return undefined;
@@ -122,16 +144,41 @@ export class EditObservationPage implements OnInit {
   async takePicture(usePhotoLibrary?: 'photoLibrary') {
     await this.platform.ready();
 
+    this.showImageSpinner = true;
+
     const imageUrl = await this.camera.getPicture(!usePhotoLibrary ? this.cameraOptions : this.photoLibraryOptions);
 
     try {
-      this.observation.imgData = new ImgData();
       const path = await this.filePath.resolveNativePath(`file://${imageUrl}`);
-      this.observation.imgData.fileUri = path;
-      this.observation.imgData.observation = this.observation;
+      // const dataUrl = this.debugService.debugMode ? await this.imageToDataUrl(Capacitor.convertFileSrc(imageUrl)) : null;
+      if (this.imgData) {
+        this.imgData.fileUri = path;
+        this.imgData.debugDataUri = null;
+      } else {
+        this.imgData = new ImgData(path, null, null);
+      }
     } catch(e) {
       window.alert(e.message);
     }
+
+    this.showImageSpinner = false;
+  }
+
+  imageToDataUrl(url): Promise<string> {
+    const xhr = new XMLHttpRequest();
+    return new Promise((resolve, reject) => {
+      xhr.onload = () => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          resolve(reader.result as string);
+        }
+        reader.onerror = reject;
+        reader.readAsDataURL(xhr.response);
+      }
+      xhr.open('GET', url);
+      xhr.responseType = 'blob';
+      xhr.send();
+    });
   }
 
   async openTypeModal() {
@@ -143,7 +190,8 @@ export class EditObservationPage implements OnInit {
       if (event.data) {
         const { observationType } = event.data;
         if (observationType) {
-          this.observation.type = observationType;
+          this.type = observationType;
+          this.observation.type = observationType && observationType.name;
         }
       }
     });
@@ -152,6 +200,14 @@ export class EditObservationPage implements OnInit {
   }
 
   async initLeafletMap() {
+    if (this.mapLocation && this.mapLocation.id) {
+      const { latitude, longitude } = this.mapLocation.coords;
+      const latLng = L.latLng(latitude, longitude);
+      this.createLeafletMap(latLng);
+      this.setLeafletMarkerAndPan(latLng);
+      return;
+    }
+
     if (!this.debugService.debugMode) {
       const currentPosition = await this.geolocation.getCurrentPosition();
       const latLng = L.latLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
@@ -175,7 +231,7 @@ export class EditObservationPage implements OnInit {
     L.tileLayer.provider('Thunderforest.Outdoors', { apikey: thunderforestApiKey }).addTo(this.map);
     setTimeout(() => {
       this.map.invalidateSize();
-    }, 1000);
+    }, 1500);
   }
 
   async openMapModal() {
@@ -184,9 +240,14 @@ export class EditObservationPage implements OnInit {
     });
     modal.onDidDismiss().then(event => {
       if (event.data && event.data.mapLocation) {
-        this.observation.mapLocation = event.data.mapLocation;
-        this.observation.mapLocation.observation = this.observation;
-        const { latitude, longitude } = this.observation.mapLocation;
+        if (!this.mapLocation) {
+          this.mapLocation = event.data.mapLocation;
+        } else {
+          const { name, coords } = event.data.mapLocation;
+          this.mapLocation.name = name;
+          this.mapLocation.coords = coords;
+        }
+        const { latitude, longitude } = this.mapLocation.coords;
         this.setLeafletMarkerAndPan(new L.LatLng(latitude, longitude));
       }
     });
@@ -218,30 +279,12 @@ export class EditObservationPage implements OnInit {
       return;
     }
 
-    try {
-      const connection = await this.dbService.getConnection();
+    this.observation.date = moment.default(this.time);
 
-      connection.transaction(async entityManager => {
-        this.observation.date = moment.default(this.time, componentDateFormat).format('YYYY-MM-DD HH:mm');
-        await entityManager.save(this.observation);
-
-        if (this.observation.imgData) {
-          if (!this.observation.imgData.id) {
-            await entityManager.delete(ImgData, { observation: this.observation });
-          }
-          await entityManager.save(this.observation.imgData);
-        }
-
-        if (this.observation.mapLocation) {
-          if (!this.observation.mapLocation.id) {
-            await entityManager.delete(MapLocation, { observation: this.observation });
-          }
-          await entityManager.save(this.observation.mapLocation);
-        }
-      });
-    } catch(e) {
-      window.alert(`Virhe: ${e.message}`);
-      return;
+    if (this.observation && !this.observation.id) {
+      await this.transactionScriptRunner.saveNewObservation(this.observation, this.imgData, this.mapLocation);
+    } else if (this.observation && this.observation.id) {
+      await this.transactionScriptRunner.updateObservation(this.observation, this.imgData, this.mapLocation); 
     }
 
     await this.router.navigate(['/home'])

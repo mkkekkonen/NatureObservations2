@@ -48,7 +48,7 @@ export class SearchSortService {
     }
 
     if (observationTypeName) {
-      filteredObservations = filteredObservations.filter(observation => observation.type.name === observationTypeName);
+      filteredObservations = filteredObservations.filter(observation => observation.type === observationTypeName);
     }
 
     if (startDateString) {

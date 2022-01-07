@@ -30,7 +30,19 @@ export default [
     icon: 'insect.svg',
   },
   {
+    name: names.ARACHNID,
+    icon: 'insect.svg',
+  },
+  {
+    name: names.FLOWER,
+    icon: 'plant.svg',
+  },
+  {
     name: names.PLANT,
+    icon: 'plant.svg',
+  },
+  {
+    name: names.TREE,
     icon: 'plant.svg',
   },
   {

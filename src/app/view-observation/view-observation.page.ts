@@ -10,7 +10,7 @@ import * as L from 'leaflet';
 
 import { DbService } from '../db.service';
 import { DebugService } from '../debug.service';
-import { Observation } from '../models';
+import { Observation, MapLocation, ImgData, ObservationType } from '../models';
 import { thunderforestApiKey } from '../secrets.json';
 
 const dbDateFormat = 'YYYY-MM-DD HH:mm';
@@ -24,7 +24,11 @@ export class ViewObservationPage implements OnInit, AfterViewInit {
   @ViewChild('viewMap', { static: false }) mapElement: ElementRef;
 
   observation$: Observable<Observation>;
+  
   observation: Observation;
+  mapLocation: MapLocation;
+  imgData: ImgData;
+  observationType: ObservationType;
 
   map: L.Map;
   marker: L.Marker;
@@ -40,15 +44,9 @@ export class ViewObservationPage implements OnInit, AfterViewInit {
     this.observation$ = this.route.paramMap.pipe(
       switchMap(async params => {
         const observationId = +params.get('id');
-
-        const connection = await this.dbService.getConnection();
-        const observationRepository = connection.getRepository('observation') as Repository<Observation>;
         try {
-          const observations = await observationRepository.find({ where: { id: observationId }, relations: ['imgData', 'mapLocation', 'type'] });
-          if (observations.length > 0) {
-            const [first] = observations;
-            return first;
-          }
+          const observation = await this.dbService.observationGateway.getById(observationId);
+          return observation;
         } catch(e) {
           window.alert(`Error fetching observation: ${e.message}`);
         }
@@ -56,10 +54,13 @@ export class ViewObservationPage implements OnInit, AfterViewInit {
     );
 
     this.observation$.subscribe({
-      next: (observation) => {
+      next: async (observation) => {
         this.observation = observation;
+        this.mapLocation = await this.dbService.mapLocationGateway.getByObservationId(observation.id);
+        this.imgData = await this.dbService.imgDataGateway.getByObservationId(observation.id);
+        this.observationType = await this.dbService.observationTypeGateway.getByTypeName(observation.type);
 
-        if (observation.mapLocation) {
+        if (this.mapLocation) {
           this.platform.ready().then(() => {
             this.createLeafletMap();
           });
@@ -72,8 +73,8 @@ export class ViewObservationPage implements OnInit, AfterViewInit {
   }
 
   get imgUrl() {
-    if (this.observation && this.observation.imgData) {
-      return (window as any).Ionic.WebView.convertFileSrc(this.observation.imgData.fileUri);
+    if (this.imgData) {
+      return (window as any).Ionic.WebView.convertFileSrc(this.imgData.fileUri);
     }
   }
 
@@ -92,8 +93,8 @@ export class ViewObservationPage implements OnInit, AfterViewInit {
   }
 
   createLeafletMap() {
-    const { latitude, longitude } = this.observation.mapLocation;
-    const latLng = new L.LatLng(latitude, longitude);
+    const { coords } = this.mapLocation;
+    const latLng = new L.LatLng(coords.latitude, coords.longitude);
 
     if (this.map) {
       this.map.remove();

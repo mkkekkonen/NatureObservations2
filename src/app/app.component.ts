@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import * as moment from 'moment';
 
 import { DbService } from './db.service';
+import { MigrationRunnerService } from './db/migration-runner.service';
 import { ObservationType, Observation, MapLocation } from './models';
 
 import observationTypes from '../assets/json/observation-types';
@@ -29,6 +30,7 @@ export class AppComponent {
     private translateService: TranslateService,
     private globalization: Globalization,
     private dbService: DbService,
+    private migrationRunnerService: MigrationRunnerService,
   ) {
     this.initializeApp();
 
@@ -36,78 +38,53 @@ export class AppComponent {
       { text: 'APP.HOME', url: ['/home'] },
       { text: 'APP.NEWOBS', url: ['/edit-observation'] },
       { text: 'APP.CREDITS', url: ['/credits'] },
+      { text: 'APP.DEBUG', url: ['/debug'] }
     ];
   }
 
   async initializeApp() {
-    this.platform.ready().then(async () => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
+    await this.platform.ready();
 
-      this.translateService.setDefaultLang('fi');
+    this.statusBar.styleDefault();
+    this.splashScreen.hide();
 
-      if ((<any>window).cordova) {
-        this.globalization.getPreferredLanguage()
-          .then(result => result.value.substring(0, 2).toLowerCase())
-          .then(code => {
-            if (code === 'fi')
-              this.setLanguage('fi');
-            else
-              this.setLanguage('en');
-          });
-      }
+    this.translateService.setDefaultLang('fi');
 
-      await this.initializeObservationTypes();
-      // await this.initializeObservations();
-    });
+    if ((<any>window).cordova) {
+      const language = await this.globalization.getPreferredLanguage();
+      const code = language.value.substring(0, 2).toLowerCase();
+      if (code === 'fi')
+        this.setLanguage('fi');
+      else
+        this.setLanguage('en');
+    }
+
+    await this.migrationRunnerService.runMigrations();
+
+    await this.initializeObservationTypes();
+    await this.initializeObservations();
   }
 
   async initializeObservationTypes() {
-    const connection = await this.dbService.getConnection();
-
-    const typeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
-
-    if ((await typeRepository.count()) > 0) {
-      return;
+    const existingTypes = await this.dbService.observationTypeGateway.getAll();
+    if (existingTypes.length === 0) {
+      await Promise.all(observationTypes.map(typeData => {
+        const type = new ObservationType(typeData.name, typeData.icon);
+        return this.dbService.observationTypeGateway.insert(type);
+      }));
     }
-
-    const types = observationTypes.map(typeData => {
-      const observationType = new ObservationType();
-      observationType.name = typeData.name;
-      observationType.imageFileName = typeData.icon;
-      return observationType;
-    });
-
-    await typeRepository.save(types);
   }
 
   async initializeObservations() {
-    const connection = await this.dbService.getConnection();
+    const existingObservations = await this.dbService.observationGateway.getAll()
 
-    const observationRepository = await connection.getRepository('observation') as Repository<Observation>;
-    const observationTypeRepository = await connection.getRepository('observationtype') as Repository<ObservationType>;
-    const mapLocationRepository = await connection.getRepository('maplocation') as Repository<MapLocation>;
-
-    if ((await observationRepository.count() > 0)) {
-      return;
+    if (existingObservations.length === 0) {
+      const observation = new Observation('Testi', 'Testi', moment.default(), 'LANDSCAPE');
+      await this.dbService.observationGateway.insert(observation);
+      
+      const mapLocation = new MapLocation('Mansesteri', 61.497480, 23.757250, observation.id);
+      await this.dbService.mapLocationGateway.insert(mapLocation);
     }
-
-    const obsType = await observationTypeRepository.findOne();
-
-    const observation = new Observation();
-    observation.title = 'Testi';
-    observation.description = 'Testi';
-    observation.date = moment.default().format('YYYY-MM-DD HH:mm:ss');
-    observation.type = obsType;
-
-    const mapLocation = new MapLocation();
-    mapLocation.name = 'Mansesteri';
-    mapLocation.latitude = 61.497480;
-    mapLocation.longitude = 23.757250;
-    mapLocation.observation = observation;
-
-    await observationRepository.save(observation);
-    await mapLocationRepository.save(mapLocation);
   }
 
   setLanguage(lang: string) {

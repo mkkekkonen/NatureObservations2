@@ -4,7 +4,7 @@
     "NEWOBS": "New observation",
     "CREDITS": "Credits",
     "DEBUG": "Debug",
-    "TITLE": "Ionic App"
+    "TITLE": "Nature Observations"
   },
   "HOME": {
     "NOBS": "Nature Observations",
@@ -76,7 +76,8 @@
     "TITLE": "Otsikko",
     "TYPE": "Tyyppi",
     "NOTYPE": "Clear type",
-    "SEARCHWORD": "Search"
+    "SEARCHWORD": "Search",
+    "WORDSEARCH": "Word Search"
   },
   "OBSTYPE": {
     "LANDSCAPE": "Landscape",
@@ -89,9 +90,15 @@
     "PLANT": "Plant",
     "MUSHROOM": "Mushroom",
     "WEATHER": "Weather",
+    "ARACHNID": "Arachnid",
+    "FLOWER": "Flower",
+    "TREE": "Tree",
     "OTHER": "Other"
   },
   "ERROR": {
     "SAVE": "Error saving observation data"
+  },
+  "DEBUG": {
+    "NUKEDB": "Nuke DB"
   }
 }

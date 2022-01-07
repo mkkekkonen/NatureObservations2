@@ -1,20 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import emojis from '../../assets/json/observation-type-emojis';
 
-import { Observation } from './observation.entity';
-
-@Entity('observationtype')
 export class ObservationType {
-  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
   name: string;
 
-  @Column()
   imageFileName: string;
 
-  @OneToMany(t => Observation, observation => observation.type)
-  observations: Observation[];
+  constructor(name: string, imageFileName: string, id?: number) {
+    this.id = id;
+    this.name = name;
+    this.imageFileName = imageFileName;
+  }
 
   get translationKey() {
     return `OBSTYPE.${this.name}`;
@@ -22,5 +19,10 @@ export class ObservationType {
 
   get imageUrl() {
     return `assets/icons/${this.imageFileName}`;
+  }
+
+  get emoji() {
+    const entry = emojis.find(entry => entry.name === this.name);
+    return entry ? entry.emoji : null;
   }
 }
