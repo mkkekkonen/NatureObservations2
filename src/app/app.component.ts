@@ -11,6 +11,7 @@ import * as moment from 'moment';
 
 import { DbService } from './db.service';
 import { MigrationRunnerService } from './db/migration-runner.service';
+import { DebugService } from './debug.service';
 import { ObservationType, Observation, MapLocation } from './models';
 
 import observationTypes from '../assets/json/observation-types';
@@ -31,6 +32,7 @@ export class AppComponent {
     private globalization: Globalization,
     private dbService: DbService,
     private migrationRunnerService: MigrationRunnerService,
+    private debugService: DebugService,
   ) {
     this.initializeApp();
 
@@ -76,6 +78,10 @@ export class AppComponent {
   }
 
   async initializeObservations() {
+    if (!this.debugService.debugMode) {
+      return;
+    }
+
     const existingObservations = await this.dbService.observationGateway.getAll()
 
     if (existingObservations.length === 0) {
