@@ -16,6 +16,7 @@ import {
   ASC,
   DESC,
 } from '../search-sort.service';
+import { DebugService } from '../debug.service';
 import { ObservationTypeModalPage } from '../observation-type-modal/observation-type-modal.page';
 
 @Component({
@@ -49,11 +50,14 @@ export class MyObservationsPage implements OnInit {
   newObservationUrl = ['/edit-observation'];
   debugUrl = ['/debug'];
 
+  debug = false;
+
   constructor(
     private modalController: ModalController,
     private translateService: TranslateService,
     private dbService: DbService,
     private searchSortService: SearchSortService,
+    private debugService: DebugService,
     private platform: Platform,
   ) {
     this.deleteObservation = this.deleteObservation.bind(this);
@@ -61,6 +65,7 @@ export class MyObservationsPage implements OnInit {
   }
 
   ngOnInit() {
+    this.debug = this.debugService.debugMode;
   }
 
   ionViewWillEnter() {
